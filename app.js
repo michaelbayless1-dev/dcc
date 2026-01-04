@@ -43,13 +43,15 @@ function isMobile(){
   return window.matchMedia && window.matchMedia("(max-width: 900px)").matches;
 }
 
-// when opening an UNLOCKED PDF:
-if (isMobile()) {
+// When opening an unlocked PDF:
+if (isMobile()){
   const url = "viewer.html?file=" + encodeURIComponent(f.path) +
               "&name=" + encodeURIComponent(f.name);
-  window.location.href = url;   // SAME tab (no popup blocking)
+  window.location.href = url;  // same tab (no popup blocking)
   return;
 }
+showPDF(f.path, f.name);
+
 
 
 // ===================== CONFIG =====================
@@ -825,6 +827,7 @@ function boot(){
   beepTick();
 }
 boot();
+
 
 
 
