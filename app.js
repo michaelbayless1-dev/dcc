@@ -40,8 +40,15 @@ function toggleHelp(){
   }, { capture: true });
 })();
 function isMobile(){
-  return window.matchMedia &&
-         window.matchMedia("(max-width: 900px)").matches;
+  return window.matchMedia && window.matchMedia("(max-width: 900px)").matches;
+}
+
+// when opening an UNLOCKED PDF:
+if (isMobile()) {
+  const url = "viewer.html?file=" + encodeURIComponent(f.path) +
+              "&name=" + encodeURIComponent(f.name);
+  window.location.href = url;   // SAME tab (no popup blocking)
+  return;
 }
 
 
@@ -818,6 +825,7 @@ function boot(){
   beepTick();
 }
 boot();
+
 
 
 
