@@ -331,13 +331,7 @@ input, button, textarea, select {
     cursor: pointer;
   }
 }
-/* ===== Fix footer cut-off (vh issues + sticky bars) ===== */
-
-/* Use dynamic viewport on modern browsers; fallback to vh */
-:root { --app-h: 100vh; }
-@supports (height: 100dvh) {
-  :root { --app-h: 100dvh; }
-}
+/* ===== Hard override: footer always visible ===== */
 
 html, body {
   height: 100%;
@@ -345,39 +339,40 @@ html, body {
 }
 
 body {
-  min-height: var(--app-h);
-  overflow: hidden; /* keep the CRT frame stable */
+  height: var(--app-h);
+  overflow: hidden;
 }
 
-/* Make the CRT container fill the viewport and use a column layout */
 .crt {
-  min-height: var(--app-h);
+  height: var(--app-h);
+  max-height: var(--app-h);
   display: flex;
   flex-direction: column;
 }
 
-/* Keep top and bottom bars visible */
-.bar {
+/* header + footer fixed heights, middle fills */
+header.bar, footer.bar {
   flex: 0 0 auto;
 }
 
-/* Middle section takes remaining space and can scroll internally */
+/* IMPORTANT: middle must be allowed to shrink and scroll */
 .wrap {
   flex: 1 1 auto;
-  min-height: 0;               /* critical for flex children scrolling */
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: 12px;        /* extra breathing room above footer */
+  min-height: 0;
+  overflow: hidden; /* prevent double scrollbars */
+  display: flex;
 }
 
-/* If you have a footer class named bar at bottom, ensure it doesn’t overlap */
+/* your left/right panes should scroll internally */
+.left, .right {
+  min-height: 0;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* keep footer visible even if other CSS uses position */
 footer.bar {
   position: sticky;
   bottom: 0;
-  z-index: 50;
+  z-index: 9999;
 }
-
-
-
-
-
