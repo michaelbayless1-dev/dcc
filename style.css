@@ -13,7 +13,9 @@ body{
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
   color:var(--fg);
 }
-
+.hidden { 
+  display: none !important; 
+}
 .crt{
   height:100%;
   padding:14px;
@@ -153,3 +155,4 @@ body{
 .helpFooter {
   margin-top: 10px;
 }
+
