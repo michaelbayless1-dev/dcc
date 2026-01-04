@@ -10,6 +10,28 @@
 
 console.log("DCC-DOS app.js loaded");
 
+// --- F1 trap (capture phase) so browser help doesn't steal it ---
+(function(){
+  function isF1(e){
+    return e.key === "F1" || e.code === "F1" || e.key === "Help";
+  }
+
+  // keydown
+  window.addEventListener("keydown", function(e){
+   if (!isF1(e)) return;
+    e.preventDefault();
+    e.stopPropagation();
+    if (typeof toggleHelp === "function") toggleHelp();
+  }, { capture: true });
+
+  // keyup (some browsers open help on keyup)
+  window.addEventListener("keyup", function(e){
+    if (!isF1(e)) return;
+    e.preventDefault();
+    e.stopPropagation();
+  }, { capture: true });
+})();
+
 // ===================== CONFIG =====================
 var PASSWORD = "GATORWIDOW"; // puzzle gate only (not real security)
 
@@ -587,16 +609,16 @@ document.addEventListener("keydown", function(e){
 
   // If help open: Esc/F1 closes
   if (help && !help.classList.contains("hidden")){
-    if (e.key === "Escape" || e.key === "F1"){
-      e.preventDefault();
-      toggleHelp();
-      return;
-    }
+    
     // Any other key while help open = soft tick
     beepTick();
     return;
   }
-
+if (e.key === "?"){
+  e.preventDefault();
+  toggleHelp();
+  return;
+}
   // If busy, ignore most input (soft tick)
   if (diskBusy){
     // allow F1 to open help even while busy
@@ -718,3 +740,4 @@ function boot(){
   beepTick();
 }
 boot();
+
