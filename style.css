@@ -430,3 +430,52 @@ iframe.pdf{
   }
 }
 
+/* ===== Fix: desktop (>=901px) must have a real height; prevent “disappearing” ===== */
+@media (min-width: 901px){
+  /* Ensure the app shell actually constrains the main area */
+  .crt{
+    height: var(--app-h) !important;
+  }
+
+  /* Give main area a real height between header/footer */
+  .wrap{
+    height: auto !important;
+    min-height: 0 !important;
+    flex: 1 1 auto !important;
+    overflow: hidden !important;
+
+    display: grid !important;
+    grid-template-columns: 380px 1fr !important;
+    grid-template-rows: minmax(0, 1fr) !important;
+  }
+
+  /* Ensure grid children can shrink and scroll correctly */
+  .left, .right{
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  /* Left: internal scroll for list */
+  .left{
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .left .list{
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow: auto !important;
+  }
+
+  /* Right: PDF fills */
+  .right{
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  iframe.pdf{
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+}
+
