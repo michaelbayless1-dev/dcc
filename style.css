@@ -417,4 +417,16 @@ iframe.pdf{
     -webkit-overflow-scrolling: touch;
   }
 }
+/* Force left/right into separate grid columns */
+@media (min-width: 901px){
+  .wrap{ display:grid !important; grid-template-columns: 380px 1fr !important; }
+  .wrap > .left{ grid-column: 1 !important; grid-row: 1 !important; }
+  .wrap > .right{ grid-column: 2 !important; grid-row: 1 !important; }
+}
+
+@media (min-width: 901px){
+  .wrap > .left, .wrap > .right{
+    position: relative !important; /* cancels accidental fixed/absolute */
+  }
+}
 
