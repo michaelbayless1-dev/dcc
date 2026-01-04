@@ -1,54 +1,18 @@
-/* DCC-DOS APP.JS (complete paste)
-   Features:
-   - Folder navigation (open folders, [..] up)
+/* DCC-DOS APP.JS (DESKTOP-ONLY CLEAN)
+   - Folder navigation ([..] up)
    - F1 Help, F3 Open, F5 Refresh, F10 Exit
    - ↑/↓ selection + Enter open + Backspace up
-   - DOS-style beeps (invalid keys / denied / confirm)
-   - Typing cursor animation (idle + lock prompt)
-   - Fake disk access delay when opening folders/files
+   - DOS beeps (warn/ok/tick)
+   - Typing cursor blink (idle + lock prompt)
+   - Fake disk delay when opening folders/files
 */
 
 console.log("DCC-DOS app.js loaded");
 
-function toggleHelp(){
-  var el = document.getElementById("help");
-  if (!el) {
-    console.warn("Help element #help not found in DOM.");
-    return;
-  }
-  el.classList.toggle("hidden");
-}
-// --- F1 trap (capture phase) so browser help doesn't steal it ---
-(function(){
-  function isF1(e){
-    return e.key === "F1" || e.code === "F1" || e.key === "Help";
-  }
-
-  // keydown
-  window.addEventListener("keydown", function(e){
-   if (!isF1(e)) return;
-    e.preventDefault();
-    e.stopPropagation();
-    if (typeof toggleHelp === "function") toggleHelp();
-  }, { capture: true });
-
-  // keyup (some browsers open help on keyup)
-  window.addEventListener("keyup", function(e){
-    if (!isF1(e)) return;
-    e.preventDefault();
-    e.stopPropagation();
-  }, { capture: true });
-})();
-function isMobile(){
-  return window.matchMedia &&
-         window.matchMedia("(max-width: 900px)").matches;
-}
-
-
 // ===================== CONFIG =====================
 var PASSWORD = "GATORWIDOW"; // puzzle gate only (not real security)
 
-// Fake “disk” timing
+// Fake disk timing
 var DISK_MIN_MS = 180;
 var DISK_MAX_MS = 650;
 
@@ -56,8 +20,7 @@ var DISK_MAX_MS = 650;
 var CURSOR_INTERVAL_MS = 550;
 
 // ===================== FILE TREE =====================
-// Mirror your real folder structure here.
-// Paths are relative to your site root (same level as index.html).
+// Paths are relative to site root (same folder as index.html).
 var TREE = {
   name: "DOC",
   type: "dir",
@@ -74,67 +37,47 @@ var TREE = {
     },
 
     { name: "10_TRAINING", type: "dir", children: [
-       { name: "BEST_PRACTICE_LLE_USE_02.PDF", type: "pdf", path: "doc/10_TRAINING/BEST_PRACTICE_LLE_USE_02.pdf", tag: "TRAINING" }
-      ] 
-    },
+      { name: "BEST_PRACTICE_LLE_USE_02.PDF", type: "pdf", path: "doc/10_TRAINING/BEST_PRACTICE_LLE_USE_02.pdf", tag: "TRAINING" }
+    ]},
 
-    {
-      name: "20_ACTIVE_CASES",
-      type: "dir",
-      children: [
-        {
-          name: "1983_BR_BATON_ROGUE",
-          type: "dir",
-          children: [
-            { name: "01_BRIEF", type: "dir", children: [] },
-            { name: "02_LOGS", type: "dir", children: [] },
-            { name: "03_WITNESS", type: "dir", children: [] },
-            { name: "04_MAPS", type: "dir", children: [] },
-            { name: "05_DISPATCH", type: "dir", children: [] },
-            {
-              name: "EVIDENCE",
-              type: "dir",
-              children: [
-                { name: "PHOTOS", type: "dir", children: [] },
-                { name: "AUDIO", type: "dir", children: [] },
-                { name: "SAMPLES", type: "dir", children: [] }
-              ]
-            },
-            {
-              name: "LOCKED",
-              type: "dir",
-              children: [
-                // Example locked:
-                // { name:"404_MISSION_DIRECTIVE.PDF", type:"pdf", locked:true, path:"doc/20_ACTIVE_CASES/1983_BR_BATON_ROGUE/LOCKED/404_MISSION_DIRECTIVE.pdf", tag:"LOCKED" }
-              ]
-            }
-          ]
-        }
-      ]
-    },
+    { name: "20_ACTIVE_CASES", type: "dir", children: [
+      { name: "1983_BR_BATON_ROGUE", type: "dir", children: [
+        { name: "01_BRIEF", type: "dir", children: [] },
+        { name: "02_LOGS", type: "dir", children: [] },
+        { name: "03_WITNESS", type: "dir", children: [] },
+        { name: "04_MAPS", type: "dir", children: [] },
+        { name: "05_DISPATCH", type: "dir", children: [] },
+        { name: "EVIDENCE", type: "dir", children: [
+          { name: "PHOTOS", type: "dir", children: [] },
+          { name: "AUDIO", type: "dir", children: [] },
+          { name: "SAMPLES", type: "dir", children: [] }
+        ]},
+        { name: "LOCKED", type: "dir", children: [
+          // Example:
+          // { name:"404_MISSION_DIRECTIVE.PDF", type:"pdf", locked:true, path:"doc/20_ACTIVE_CASES/1983_BR_BATON_ROGUE/LOCKED/404_MISSION_DIRECTIVE.pdf", tag:"LOCKED" }
+        ]}
+      ]}
+    ]},
 
-    {
-      name: "30_FIELD_MANUALS",
-      type: "dir",
-      children: [
-        { name: "203_FIELD_MANUAL_OIL_MEN.PDF", type: "pdf", path: "doc/30_FIELD_MANUALS/203_FIELD_MANUAL_OIL_MEN.pdf", tag: "MAN" },
-        { name: "218_FIELD_MANUAL_COLOR_BLEEDERS.PDF", type: "pdf", path: "doc/30_FIELD_MANUALS/218_FIELD_MANUAL_COLOR_BLEEDERS.pdf", tag: "MAN" },
-        { name: "223_FIELD_MANUAL_GREEN_DRAGON.PDF", type: "pdf", path: "doc/30_FIELD_MANUALS/223_FIELD_MANUAL_GREEN_DRAGON.pdf", tag: "MAN" }
-      ]
-    },
+    { name: "30_FIELD_MANUALS", type: "dir", children: [
+      { name: "203_FIELD_MANUAL_OIL_MEN.PDF", type: "pdf", path: "doc/30_FIELD_MANUALS/203_FIELD_MANUAL_OIL_MEN.pdf", tag: "MAN" },
+      { name: "218_FIELD_MANUAL_COLOR_BLEEDERS.PDF", type: "pdf", path: "doc/30_FIELD_MANUALS/218_FIELD_MANUAL_COLOR_BLEEDERS.pdf", tag: "MAN" },
+      { name: "223_FIELD_MANUAL_GREEN_DRAGON.PDF", type: "pdf", path: "doc/30_FIELD_MANUALS/223_FIELD_MANUAL_GREEN_DRAGON.pdf", tag: "MAN" }
+    ]},
 
     { name: "40_FORMS", type: "dir", children: [] },
-     { name: "50_SCIENCE_DEPARTMENT", type: "dir", children: [
-        { name: "000157_SCI_DEP_EXT_CONTROL.PDF", type: "pdf", path: "doc/50_SCIENCE_DEPARTMENT/000157_SCI_DEP_EXT_CONTROL.pdf", tag: "SCI_CASE" },
-        { name: "000025_SCI_DEP_EVENT_05X25.PDF", type: "pdf", path: "doc/50_SCIENCE_DEPARTMENT/000025_SCI_DEP_EVENT_05X25.pdf", tag: "SCI_CASE" },
-        { name: "000198_SCI_DEP_EVENT_05725.PDF", type: "pdf", path: "doc/50_SCIENCE_DEPARTMENT/000198_SCI_DEP_EVENT_05725.pdf", tag: "SCI_CASE" }
-     ] 
-     },
+
+    { name: "50_SCIENCE_DEPARTMENT", type: "dir", children: [
+      { name: "000157_SCI_DEP_EXT_CONTROL.PDF", type: "pdf", path: "doc/50_SCIENCE_DEPARTMENT/000157_SCI_DEP_EXT_CONTROL.pdf", tag: "SCI_CASE" },
+      { name: "000025_SCI_DEP_EVENT_05X25.PDF", type: "pdf", path: "doc/50_SCIENCE_DEPARTMENT/000025_SCI_DEP_EVENT_05X25.pdf", tag: "SCI_CASE" },
+      { name: "000198_SCI_DEP_EVENT_05725.PDF", type: "pdf", path: "doc/50_SCIENCE_DEPARTMENT/000198_SCI_DEP_EVENT_05725.pdf", tag: "SCI_CASE" }
+    ]},
+
     { name: "80_INTERNAL", type: "dir", children: [
-       { name: "DIRECTOR_MEMO_789.PDF", type: "pdf", path: "doc/80_INTERNAL/DIRECTOR_MEMO_789.pdf", tag: "DCC_OFFICIAL" },
-       { name: "MISSION_STATEMENT_OFFICIAL.PDF", type: "pdf", path: "doc/80_INTERNAL/MISSION_STATEMENT_OFFICIAL.pdf", tag: "DCC_OFFICIAL" }
-    ] 
-    },
+      { name: "DIRECTOR_MEMO_789.PDF", type: "pdf", path: "doc/80_INTERNAL/DIRECTOR_MEMO_789.pdf", tag: "DCC_OFFICIAL" },
+      { name: "MISSION_STATEMENT_OFFICIAL.PDF", type: "pdf", path: "doc/80_INTERNAL/MISSION_STATEMENT_OFFICIAL.pdf", tag: "DCC_OFFICIAL" }
+    ]},
+
     { name: "90_ARCHIVE_POLICY", type: "dir", children: [] }
   ]
 };
@@ -148,95 +91,33 @@ var viewerTitle = document.getElementById("viewerTitle");
 var pw = document.getElementById("pw");
 var unlockBtn = document.getElementById("unlockBtn");
 var pwMsg = document.getElementById("pwMsg");
-
-// Left path title (recommended in index.html):
-// <div class="panelTitle" id="pathTitle">C:\DCC\</div>
 var pathTitle = document.getElementById("pathTitle");
-
-// Help overlay (we can create it if missing)
 var help = document.getElementById("help");
 
-var pendingLockedFile = null;
-
-// Selection + entries
-var selectedIndex = 0;
-var currentEntries = [];
-
-// Disk busy lock (prevents double-open spam)
-var diskBusy = false;
-
-function isMobile(){
-  return window.matchMedia && window.matchMedia("(max-width: 900px)").matches;
+// ===================== HELP (F1 + Esc) =====================
+function toggleHelp(){
+  if (!help) return;
+  help.classList.toggle("hidden");
+  beepTick();
 }
 
-function enterMobileViewer(){
-  document.body.classList.add("viewing");
+// Capture F1 so browser help doesn’t steal it
+(function(){
+  function isF1(e){ return e.key === "F1" || e.code === "F1" || e.key === "Help"; }
 
-  // create Back button once
-  if (!document.getElementById("mobileBackBtn")) {
-    const btn = document.createElement("button");
-    btn.id = "mobileBackBtn";
-    btn.className = "mobileBackBtn";
-    btn.textContent = "BACK TO FILES";
-    btn.addEventListener("click", exitMobileViewer);
-    // put it at top of right pane
-    const rightPane = document.querySelector(".right");
-    rightPane.insertBefore(btn, rightPane.firstChild);
-  }
-}
+  window.addEventListener("keydown", function(e){
+    if (!isF1(e)) return;
+    e.preventDefault();
+    e.stopPropagation();
+    toggleHelp();
+  }, { capture:true });
 
-function exitMobileViewer(){
-  document.body.classList.remove("viewing");
-}
-
-
-
-// ===================== HELP OVERLAY (auto-create if missing) =====================
-function ensureHelp(){
-  if (help) return;
-
-  help = document.createElement("div");
-  help.id = "help";
-  help.className = "help hidden";
-  help.setAttribute("role", "dialog");
-  help.setAttribute("aria-modal", "true");
-
-  // Minimal styling without touching your CSS: keep it readable
-  help.style.position = "fixed";
-  help.style.inset = "0";
-  help.style.display = "grid";
-  help.style.placeItems = "center";
-  help.style.background = "rgba(0,0,0,0.6)";
-  help.style.zIndex = "9999";
-
-  var box = document.createElement("div");
-  box.className = "helpBox";
-  box.style.width = "min(720px, 92vw)";
-  box.style.padding = "14px";
-  box.style.border = "1px solid rgba(180,255,210,0.35)";
-  box.style.background = "rgba(0,0,0,0.88)";
-  box.style.boxShadow = "0 0 30px rgba(0,0,0,0.85)";
-
-  box.innerHTML =
-    "<div class='panelTitle'>DCC-DOS HELP</div>" +
-    "<div class='mono'>" +
-    "<div><b>F1</b>  Help (toggle)</div>" +
-    "<div><b>F3</b>  Open selected item</div>" +
-    "<div><b>F5</b>  Refresh directory</div>" +
-    "<div><b>F10</b> Exit session</div>" +
-    "<br/>" +
-    "<div><b>↑/↓</b> Move selection</div>" +
-    "<div><b>Enter</b> Open</div>" +
-    "<div><b>Backspace</b> Up one level</div>" +
-    "<br/>" +
-    "<div class='dim'>NOTE: “LOCKED” files require a passphrase.</div>" +
-    "</div>" +
-    "<div class='dim' style='margin-top:10px'>Press F1 or Esc to close</div>";
-
-  help.appendChild(box);
-  document.body.appendChild(help);
-}
-ensureHelp();
+  window.addEventListener("keyup", function(e){
+    if (!isF1(e)) return;
+    e.preventDefault();
+    e.stopPropagation();
+  }, { capture:true });
+})();
 
 // ===================== DOS BEEPS =====================
 var audioCtx = null;
@@ -255,113 +136,75 @@ function getAudioCtx(){
 function beep(freq, ms, gain){
   var ctx = getAudioCtx();
   if (!ctx) return;
-
-  // Some browsers require user interaction before sound is allowed.
-  // If it fails silently, that's OK.
   try {
     if (ctx.state === "suspended") ctx.resume();
-
     var o = ctx.createOscillator();
     var g = ctx.createGain();
-
     o.type = "square";
     o.frequency.value = freq;
-
     g.gain.value = gain;
-
     o.connect(g);
     g.connect(ctx.destination);
-
     o.start();
-
-    setTimeout(function(){
-      try { o.stop(); } catch (e2) {}
-    }, ms);
+    setTimeout(function(){ try { o.stop(); } catch(e2){} }, ms);
   } catch (e) {}
 }
 
-function beepOk(){
-  beep(880, 45, 0.03);
-  setTimeout(function(){ beep(1320, 40, 0.025); }, 55);
-}
+function beepOk(){ beep(880, 45, 0.03); setTimeout(function(){ beep(1320, 40, 0.025); }, 55); }
+function beepWarn(){ beep(220, 110, 0.045); }
+function beepTick(){ beep(900, 18, 0.015); }
 
-function beepWarn(){
-  beep(220, 110, 0.045);
-}
-
-function beepTick(){
-  beep(900, 18, 0.015);
-}
-
-// ===================== NAVIGATION STACK =====================
-// Fake C:\DCC\DOC\ path feel
+// ===================== NAV STACK =====================
 var navStack = [
-  { node: { name: "DCC", type: "dir", children: [TREE] }, label: "DCC" },
-  { node: TREE, label: "DOC" }
+  { node: { name: "DCC", type:"dir", children:[TREE] }, label:"DCC" },
+  { node: TREE, label:"DOC" }
 ];
 
-function currentNode(){
-  return navStack[navStack.length - 1].node;
-}
+function currentNode(){ return navStack[navStack.length - 1].node; }
 
 function currentPath(){
   var parts = [];
-  for (var i = 0; i < navStack.length; i++) parts.push(navStack[i].label);
+  for (var i=0; i<navStack.length; i++) parts.push(navStack[i].label);
   return "C:\\" + parts.join("\\") + "\\";
 }
 
 function isInLockedFolder(){
-  for (var i = 0; i < navStack.length; i++){
+  for (var i=0; i<navStack.length; i++){
     if (String(navStack[i].label).toUpperCase() === "LOCKED") return true;
   }
   return false;
 }
 
 // ===================== VIEW HELPERS =====================
-function showIdle(message){
-  if (!idle) return;
-
-  // Ensure viewer panel state
-  if (pdf) { pdf.src = ""; pdf.classList.add("hidden"); }
+function showIdle(msg){
+  if (pdf){ pdf.src = ""; pdf.classList.add("hidden"); }
   if (locked) locked.classList.add("hidden");
-  idle.classList.remove("hidden");
-
+  if (idle) idle.classList.remove("hidden");
   if (viewerTitle) viewerTitle.textContent = "VIEWER";
 
-  // Update idle message if possible
-  // Expecting:
-  // <div class="big">DCC ARCHIVE TERMINAL</div>
-  // <div class="mono dim">Select a file on the left to open.</div>
-  var mono = idle.querySelector(".mono");
-  if (mono && message) mono.textContent = message;
+  var mono = idle ? idle.querySelector(".mono") : null;
+  if (mono && msg) mono.textContent = msg;
 
-  // Cursor in idle message
   ensureCursor(mono || idle);
 }
 
 function showPDF(path, title){
-  viewerTitle.textContent = `VIEWER: ${title}`;
-  pdf.src = path; // no zoom hacks
-  pdf.classList.remove("hidden");
-  locked.classList.add("hidden");
-  idle.classList.add("hidden");
+  if (viewerTitle) viewerTitle.textContent = "VIEWER: " + title;
+  if (pdf){
+    pdf.src = path;
+    pdf.classList.remove("hidden");
+  }
+  if (locked) locked.classList.add("hidden");
+  if (idle) idle.classList.add("hidden");
 }
-
-
-
 
 function showLock(title){
   if (viewerTitle) viewerTitle.textContent = "VIEWER: " + title;
-
   if (pdf) pdf.classList.add("hidden");
   if (idle) idle.classList.add("hidden");
   if (locked) locked.classList.remove("hidden");
-
-  if (pw) pw.value = "";
+  if (pw){ pw.value = ""; pw.focus(); }
   if (pwMsg) pwMsg.textContent = "";
-  if (pw) pw.focus();
-
-  // Cursor inside lock panel (after the "Enter passphrase:" line)
   ensureCursor(locked);
 }
 
@@ -375,7 +218,8 @@ var cursorTimer = null;
 var cursorVisible = true;
 
 function ensureCursor(targetEl){
-  // Create cursor once
+  if (!targetEl) return;
+
   if (!cursorEl){
     cursorEl = document.createElement("span");
     cursorEl.id = "dccCursor";
@@ -385,34 +229,24 @@ function ensureCursor(targetEl){
     cursorEl.style.opacity = "0.85";
   }
 
-  // Attach cursor to a reasonable place
-  if (!targetEl) return;
-
-  // If target is lock panel, attach to the line that says "Enter passphrase:"
+  // Lock panel: attach after "Enter passphrase:"
   if (targetEl === locked && locked){
     var lines = locked.querySelectorAll(".mono");
     var attach = null;
-    for (var i = 0; i < lines.length; i++){
-      if (lines[i].textContent && lines[i].textContent.toLowerCase().indexOf("enter passphrase") !== -1){
+    for (var i=0; i<lines.length; i++){
+      if ((lines[i].textContent || "").toLowerCase().indexOf("enter passphrase") !== -1){
         attach = lines[i];
         break;
       }
     }
-    if (attach){
-      if (cursorEl.parentNode !== attach){
-        attach.appendChild(cursorEl);
-      }
-      startCursorBlink();
-      return;
-    }
+    if (attach && cursorEl.parentNode !== attach) attach.appendChild(cursorEl);
+    startCursorBlink();
+    return;
   }
 
-  // Otherwise attach to the target itself (or first .mono inside)
   var mono = targetEl.querySelector ? targetEl.querySelector(".mono") : null;
   var attachEl = mono || targetEl;
-  if (attachEl && cursorEl.parentNode !== attachEl){
-    attachEl.appendChild(cursorEl);
-  }
+  if (attachEl && cursorEl.parentNode !== attachEl) attachEl.appendChild(cursorEl);
   startCursorBlink();
 }
 
@@ -424,11 +258,12 @@ function startCursorBlink(){
   }, CURSOR_INTERVAL_MS);
 }
 
-// ===================== DISK ACCESS DELAY =====================
+// ===================== DISK DELAY =====================
+var diskBusy = false;
+
 function diskDelay(fn){
   if (diskBusy) return;
   diskBusy = true;
-
   var ms = DISK_MIN_MS + Math.floor(Math.random() * (DISK_MAX_MS - DISK_MIN_MS + 1));
   setTimeout(function(){
     diskBusy = false;
@@ -437,21 +272,17 @@ function diskDelay(fn){
 }
 
 function flashDiskMessage(msg){
-  // Show an “ACCESSING...” style hint without adding new HTML
   if (viewerTitle) viewerTitle.textContent = msg;
-  // Optional short tick sound
   beepTick();
 }
 
-// ===================== LIST RENDERING (folders + files + selection) =====================
+// ===================== LIST RENDER =====================
+var selectedIndex = 0;
+var currentEntries = [];
+var pendingLockedFile = null;
+
 function updateLeftPane(){
-  if (pathTitle) {
-    pathTitle.textContent = currentPath();
-  } else {
-    // fallback: try to set the first .panelTitle in left pane if pathTitle id isn't present
-    var maybe = document.querySelector(".left .panelTitle");
-    if (maybe) maybe.textContent = currentPath();
-  }
+  if (pathTitle) pathTitle.textContent = currentPath();
   renderList();
 }
 
@@ -462,73 +293,51 @@ function renderList(){
   currentEntries = [];
 
   // [..] entry if not at DOC root
-  if (navStack.length > 2){
-    currentEntries.push({ type: "up" });
-  }
+  if (navStack.length > 2) currentEntries.push({ type:"up" });
 
   var node = currentNode();
   var children = (node.children || []).slice();
 
   children.sort(function(a,b){
     if (a.type === b.type) return a.name.localeCompare(b.name);
-    return a.type === "dir" ? -1 : 1;
+    return (a.type === "dir") ? -1 : 1;
   });
 
-  for (var i = 0; i < children.length; i++){
-    currentEntries.push(children[i]);
-  }
+  for (var i=0; i<children.length; i++) currentEntries.push(children[i]);
 
-  // clamp selection
   if (selectedIndex < 0) selectedIndex = 0;
   if (selectedIndex > currentEntries.length - 1) selectedIndex = Math.max(0, currentEntries.length - 1);
 
-  for (var k = 0; k < currentEntries.length; k++){
+  for (var k=0; k<currentEntries.length; k++){
     (function(entry, idx){
       var row = document.createElement("div");
       row.className = "item" + (idx === selectedIndex ? " selected" : "");
 
-      // UP
       if (entry.type === "up"){
         row.innerHTML = "[..] <span class='tag'>[UP]</span>";
-        row.onclick = function(){
-          selectedIndex = idx;
-          activateSelected();
-        };
-        list.appendChild(row);
-        return;
-      }
-
-      // DIR
-      if (entry.type === "dir"){
+      } else if (entry.type === "dir"){
         row.innerHTML = entry.name + " <span class='tag'>[DIR]</span>";
-        row.onclick = function(){
-          selectedIndex = idx;
-          activateSelected();
-        };
-        list.appendChild(row);
-        return;
+      } else if (entry.type === "pdf"){
+        var lockedNow = !!entry.locked || isInLockedFolder();
+        var tag = lockedNow ? "LOCKED" : (entry.tag || "FILE");
+        row.innerHTML = entry.name + " <span class='tag'>[" + tag + "]</span>";
+      } else {
+        row.innerHTML = entry.name || "(UNKNOWN)";
       }
 
-      // PDF
-      var lockedNow = !!entry.locked || isInLockedFolder();
-      var tag = lockedNow ? "LOCKED" : (entry.tag || "FILE");
-      row.innerHTML = entry.name + " <span class='tag'>[" + tag + "]</span>";
       row.onclick = function(){
         selectedIndex = idx;
         activateSelected();
       };
+
       list.appendChild(row);
     })(currentEntries[k], k);
   }
 }
 
-function rerenderSelection(){
-  renderList();
-}
-
 function goUp(){
   if (navStack.length <= 2){
-    beepWarn(); // invalid at root
+    beepWarn();
     return;
   }
   flashDiskMessage("ACCESSING: ..");
@@ -548,14 +357,12 @@ function activateSelected(){
 
   var entry = currentEntries[selectedIndex];
 
-  // [..]
-  if (entry && entry.type === "up"){
+  if (entry.type === "up"){
     goUp();
     return;
   }
 
-  // folder
-  if (entry && entry.type === "dir"){
+  if (entry.type === "dir"){
     flashDiskMessage("ACCESSING: " + entry.name);
     diskDelay(function(){
       navStack.push({ node: entry, label: entry.name });
@@ -566,13 +373,18 @@ function activateSelected(){
     return;
   }
 
-  // file
-  if (entry && entry.type === "pdf"){
+  if (entry.type === "pdf"){
     var lockedNow = !!entry.locked || isInLockedFolder();
     flashDiskMessage("OPENING: " + entry.name);
     diskDelay(function(){
-      openPdfNode(entry, lockedNow);
-      // (beep happens inside openPdfNode depending on state)
+      if (!lockedNow){
+        showPDF(entry.path, entry.name);
+        beepOk();
+      } else {
+        pendingLockedFile = entry;
+        showLock(entry.name);
+        beepWarn();
+      }
     });
     return;
   }
@@ -580,55 +392,7 @@ function activateSelected(){
   beepWarn();
 }
 
-// ===================== OPEN FILES + LOCK =====================
-function openPdfNode(f, lockedNow){
-  if (!lockedNow){
-    showPDF(f.path, f.name);
-    beepOk();
-    return;
-  }
-  pendingLockedFile = f;
-  showLock(f.name);
-  beepWarn();
-}
-function openFile(idx){
-  const f = FILES[idx];
-
-  // OPTION 3: on phones, open PDFs in a new tab
-  function isMobile(){
-  return window.matchMedia("(max-width: 900px)").matches;
-}
-
-function openFile(idx){
-  const f = FILES[idx];
-
-  if (!f.locked && isMobile()){
-    const url = "viewer.html?file=" + encodeURIComponent(f.path) +
-                "&name=" + encodeURIComponent(f.name);
-    window.location.href = url;
-    return;
-  }
-
-  if (!f.locked){
-    showPDF(f.path, f.name);
-    return;
-  }
-
-  pendingLockedFile = f;
-  showLock(f.name);
-}
-
-
-
-  if (!f.locked){
-    showPDF(f.path, f.name);
-    return;
-  }
-
-  // locked file
-  pendingLockedFile = f;
-  showLock(f.name);
-}
+// ===================== LOCK UNLOCK =====================
 function tryUnlock(){
   if (!pendingLockedFile){
     beepWarn();
@@ -648,88 +412,32 @@ function tryUnlock(){
 }
 
 if (unlockBtn) unlockBtn.onclick = tryUnlock;
-if (pw) {
+if (pw){
   pw.onkeydown = function(e){
-    if (e.key === "Enter") {
+    if (e.key === "Enter"){
       e.preventDefault();
       tryUnlock();
     }
   };
 }
 
-// ===================== HELP =====================
-function toggleHelp(){
-  ensureHelp();
-  if (!help) return;
-  var isHidden = help.classList.contains("hidden");
-  if (isHidden) {
-    help.classList.remove("hidden");
-    beepTick();
-  } else {
-    help.classList.add("hidden");
-    beepTick();
-  }
-   if (e.key === "Escape" && help && !help.classList.contains("hidden")) {
-  e.preventDefault();
-  toggleHelp();
-}
-}
-window.addEventListener("keydown", function(e){
-  if (e.key === "F1" || e.key === "Help") {
-    e.preventDefault();
-    toggleHelp();
-  }
-  if (e.key === "Escape") {
-    var el = document.getElementById("help");
-    if (el && !el.classList.contains("hidden")) {
-      e.preventDefault();
-      toggleHelp();
-    }
-  }
-}, { capture: true });
-
 // ===================== EXIT =====================
 function exitSession(){
   flashDiskMessage("TERMINATING SESSION...");
   diskDelay(function(){
-    // reset viewer
-    if (pdf) { pdf.src = ""; pdf.classList.add("hidden"); }
-    if (locked) locked.classList.add("hidden");
-    if (idle) idle.classList.remove("hidden");
-    if (viewerTitle) viewerTitle.textContent = "VIEWER";
-
-    // back to root
     while (navStack.length > 2) navStack.pop();
     selectedIndex = 0;
     updateLeftPane();
-    exitMobileViewer();
-
-    // idle message + cursor
     showIdle("Session terminated. Press F5 to reinitialize.");
     beepOk();
   });
 }
 
-// ===================== KEYBOARD (F-keys + DOS nav) =====================
+// ===================== KEYBOARD =====================
 document.addEventListener("keydown", function(e){
-  ensureHelp();
-
-  // If help open: Esc/F1 closes
+  // If help open: allow Esc to close; otherwise swallow keys
   if (help && !help.classList.contains("hidden")){
-    
-    // Any other key while help open = soft tick
-    beepTick();
-    return;
-  }
-if (e.key === "?"){
-  e.preventDefault();
-  toggleHelp();
-  return;
-}
-  // If busy, ignore most input (soft tick)
-  if (diskBusy){
-    // allow F1 to open help even while busy
-    if (e.key === "F1"){
+    if (e.key === "Escape"){
       e.preventDefault();
       toggleHelp();
       return;
@@ -738,15 +446,22 @@ if (e.key === "?"){
     return;
   }
 
-  // If typing in password box, allow text entry (except function keys + nav keys)
+  if (diskBusy){
+    beepTick();
+    return;
+  }
+
   var active = document.activeElement;
   var typingInPw = (active && active.id === "pw");
 
-  // Function keys
-  if (e.key === "F1"){
-    e.preventDefault();
-    toggleHelp();
-    return;
+  if (e.key === "Escape"){
+    // If lock panel open, back out to idle (optional)
+    if (locked && !locked.classList.contains("hidden")){
+      e.preventDefault();
+      showIdle("Select a file on the left to open.");
+      beepTick();
+      return;
+    }
   }
 
   if (e.key === "F5"){
@@ -771,28 +486,17 @@ if (e.key === "?"){
     return;
   }
 
-  // Lock screen: Enter handled by pw handler, but allow Escape to back out (optional)
   if (locked && !locked.classList.contains("hidden")){
-    if (e.key === "Escape"){
-      e.preventDefault();
-      // Back out to idle (doesn't unlock)
-      showIdle("Select a file on the left to open.");
-      beepTick();
-      return;
-    }
-    // Otherwise, if not typing in pw, treat as invalid
-    if (!typingInPw){
-      beepWarn();
-    }
+    // allow typing in password input
+    if (!typingInPw && e.key && e.key.length === 1) beepWarn();
     return;
   }
 
-  // Navigation keys (DOS feel)
   if (e.key === "ArrowDown"){
     e.preventDefault();
     if (!currentEntries.length){ beepWarn(); return; }
     selectedIndex = Math.min(selectedIndex + 1, currentEntries.length - 1);
-    rerenderSelection();
+    renderList();
     beepTick();
     return;
   }
@@ -801,13 +505,12 @@ if (e.key === "?"){
     e.preventDefault();
     if (!currentEntries.length){ beepWarn(); return; }
     selectedIndex = Math.max(selectedIndex - 1, 0);
-    rerenderSelection();
+    renderList();
     beepTick();
     return;
   }
 
   if (e.key === "Enter"){
-    // if focus is in pw, let pw handler do it
     if (typingInPw) return;
     e.preventDefault();
     activateSelected();
@@ -815,16 +518,13 @@ if (e.key === "?"){
   }
 
   if (e.key === "Backspace"){
-    // if focus is in pw, allow deleting characters
     if (typingInPw) return;
     e.preventDefault();
     goUp();
     return;
   }
 
-  // Ignore normal typing (so you can scroll/page without beeping constantly),
-  // but beep for "random keys" that feel like invalid commands (optional).
-  // We'll only beep on single-character keys when not in an input.
+  // Optional DOS “invalid key” beep
   if (!typingInPw && e.key && e.key.length === 1){
     beepWarn();
   }
@@ -847,13 +547,3 @@ function boot(){
   beepTick();
 }
 boot();
-
-
-
-
-
-
-
-
-
-
