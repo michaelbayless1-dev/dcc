@@ -148,13 +148,11 @@
     }
 
     const PDFJS_CANDIDATES = [
-      "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.js",
-      "https://unpkg.com/pdfjs-dist@4.10.38/build/pdf.min.js"
+      src="vendor/pdfjs/pdf.min.js"
     ];
 
     const WORKER_CANDIDATES = [
-      "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.js",
-      "https://unpkg.com/pdfjs-dist@4.10.38/build/pdf.worker.min.js"
+      src="vendor/pdfjs/pdf.min.js"
     ];
 
     let pdfjsLib = null;
@@ -165,11 +163,13 @@
 
       for (let i=0; i<PDFJS_CANDIDATES.length; i++){
         try{
-          await loadScript(PDFJS_CANDIDATES[i]);
+          await loadipt(PDFJS_CANDIDATES[i]);
           if (window.pdfjsLib){
             pdfjsLib = window.pdfjsLib;
             workerSrc = WORKER_CANDIDATES[i] || WORKER_CANDIDATES[0];
-            pdfjsLib.GlobalWorkerOptions.workerSrc = workerSrc;
+            pdfjsLib.GlobalWorkerOptions.workerSrc =
+  "vendor/pdfjs/pdf.worker.min.js";
+
             showOk("PDF.js loaded.");
             return;
           }
@@ -279,6 +279,6 @@
         );
       }
     })();
-  </script>
+  </ipt>
 </body>
 </html>
