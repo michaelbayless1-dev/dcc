@@ -584,9 +584,12 @@ function openFile(idx){
 
   // OPTION 3: on phones, open PDFs in a new tab
   if (isMobile() && !f.locked){
-    window.open(f.path, "_blank");
-    return;
-  }
+  // Open the wrapper page in the SAME tab (works in Chrome + Safari, no popup blocking)
+  const url = "viewer.html?file=" + encodeURIComponent(f.path) +
+              "&name=" + encodeURIComponent(f.name);
+  window.location.href = url;
+  return;
+}
 
   if (!f.locked){
     showPDF(f.path, f.name);
@@ -815,6 +818,7 @@ function boot(){
   beepTick();
 }
 boot();
+
 
 
 
