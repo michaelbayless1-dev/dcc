@@ -275,3 +275,52 @@ footer.bar {
   .panelTitle { font-size: 11px; }
   .item { padding: 11px 10px; }
 }
+/* ===== Keep terminal height static; left directory scrolls only ===== */
+@media (min-width: 901px){
+
+  /* Clamp the main area between header/footer */
+  .wrap{
+    height: auto;
+    min-height: 0;
+    align-content: stretch;
+  }
+
+  /* Make each pane a fixed-height column that doesn't grow the page */
+  .left, .right{
+    height: 100%;
+    min-height: 0;
+  }
+
+  /* Left pane: fixed shell with internal scrolling area */
+  .left{
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;      /* prevent left content from expanding layout */
+  }
+
+  /* The file list is the scroller */
+  .left .list{
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Keep hint block visible but not layout-breaking */
+  .left .hint{
+    flex: 0 0 auto;
+  }
+
+  /* Right pane: fixed shell, PDF fills remaining space */
+  .right{
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  iframe.pdf{
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+}
+
