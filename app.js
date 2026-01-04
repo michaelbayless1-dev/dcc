@@ -73,7 +73,10 @@ var TREE = {
       ]
     },
 
-    { name: "10_TRAINING", type: "dir", children: [] },
+    { name: "10_TRAINING", type: "dir", children: [
+       { name: "BEST_PRACTICE_LLE_USE_02.PDF", type: "pdf", path: "doc/10_TRAINING/BEST_PRACTICE_LLE_USE_02.pdf", tag: "TRAINING" }
+      ] 
+    },
 
     {
       name: "20_ACTIVE_CASES",
@@ -121,7 +124,17 @@ var TREE = {
     },
 
     { name: "40_FORMS", type: "dir", children: [] },
-    { name: "80_INTERNAL", type: "dir", children: [] },
+     { name: "50_SCIENCE_DEPARTMENT", type: "dir", children: [
+        { name: "000157_SCI_DEP_EXT_CONTROL.PDF", type: "pdf", path: "doc/50_SCIENCE_DEPARTMENT/000157_SCI_DEP_EXT_CONTROL.pdf", tag: "SCI_CASE" },
+        { name: "000025_SCI_DEP_EVENT_05X25.PDF", type: "pdf", path: "doc/50_SCIENCE_DEPARTMENT/000025_SCI_DEP_EVENT_05X25.pdf", tag: "SCI_CASE" },
+        { name: "000198_SCI_DEP_EVENT_05725.PDF", type: "pdf", path: "doc/50_SCIENCE_DEPARTMENT/000198_SCI_DEP_EVENT_05725.pdf", tag: "SCI_CASE" }
+     ] 
+     },
+    { name: "80_INTERNAL", type: "dir", children: [
+       { name: "DIRECTOR_MEMO_789.PDF", type: "pdf", path: "doc/80_INTERNAL/DIRECTOR_MEMO_789.pdf", tag: "DCC_OFFICIAL" },
+       { name: "MISSION_STATEMENT_OFFICIAL.PDF", type: "pdf", path: "doc/80_INTERNAL/MISSION_STATEMENT_OFFICIAL.pdf", tag: "DCC_OFFICIAL" }
+    ] 
+    },
     { name: "90_ARCHIVE_POLICY", type: "dir", children: [] }
   ]
 };
@@ -815,6 +828,7 @@ function boot(){
   beepTick();
 }
 boot();
+
 
 
 
