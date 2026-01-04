@@ -341,14 +341,16 @@ function showIdle(message){
 
 function showPDF(path, title){
   viewerTitle.textContent = `VIEWER: ${title}`;
-  pdf.src = path;
+
+  // Force page-width (works in most desktop browsers)
+  const view = "#zoom=page-width";
+  pdf.src = path + view;
 
   pdf.classList.remove("hidden");
   locked.classList.add("hidden");
   idle.classList.add("hidden");
-
-  if (isMobile()) enterMobileViewer();
 }
+
 
 
 function showLock(title){
@@ -828,6 +830,7 @@ function boot(){
   beepTick();
 }
 boot();
+
 
 
 
