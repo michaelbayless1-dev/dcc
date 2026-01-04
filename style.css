@@ -171,5 +171,119 @@ body{
 .helpFooter {
   margin-top: 10px;
 }
+/* ---------------------------
+   Mobile + Responsive DOS UI
+---------------------------- */
+
+/* Make sizing predictable */
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+/* Prevent horizontal scroll on phones */
+body {
+  overflow-x: hidden;
+}
+
+/* If your outer CRT container is fixed-width anywhere, kill it */
+.crt {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Ensure the app uses full viewport height */
+.wrap {
+  min-height: calc(100dvh - 80px); /* bars take space; adjust if needed */
+}
+
+/* Make iframe behave on mobile */
+.pdf {
+  width: 100%;
+  height: 70dvh;          /* good default for phones */
+  border: 0;
+}
+
+/* Make list scrollable on small screens */
+.list {
+  max-height: 45dvh;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Help modal fits small screens */
+.helpBox {
+  max-height: 85dvh;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Buttons + input: larger touch targets */
+.btn, .pw {
+  min-height: 44px;       /* Apple HIG touch target */
+  font-size: 16px;        /* prevents iOS zoom on focus */
+}
+
+/* Avoid iOS zoom when tapping input */
+input, button, textarea, select {
+  font-size: 16px;
+}
+
+/* Safe area padding for iPhones with notch */
+.bar {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* --------- Mobile breakpoint --------- */
+@media (max-width: 900px) {
+  /* Stack panes vertically */
+  .wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .left, .right {
+    width: 100%;
+  }
+
+  /* Make left pane shorter; right pane gets more room */
+  .left {
+    order: 1;
+  }
+
+  .right {
+    order: 2;
+  }
+
+  /* Left list becomes a scroll panel */
+  .list {
+    max-height: 33dvh;
+  }
+
+  /* Viewer gets most space */
+  .pdf {
+    height: 55dvh;
+  }
+}
+
+/* --------- Extra-small phones --------- */
+@media (max-width: 420px) {
+  .panelTitle {
+    font-size: 12px;
+  }
+
+  .item {
+    padding: 10px 8px; /* easier tapping */
+  }
+
+  .pdf {
+    height: 52dvh;
+  }
+}
+
 
 
