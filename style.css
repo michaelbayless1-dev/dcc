@@ -284,6 +284,54 @@ input, button, textarea, select {
     height: 52dvh;
   }
 }
+/* ===== Mobile: make PDFs readable (iPhone/Android) ===== */
+@media (max-width: 900px) {
+  /* stop fixed-height math from desktop layout */
+  .wrap { height: auto !important; min-height: auto !important; display: block !important; }
+
+  /* panes stack naturally */
+  .left, .right { width: 100% !important; }
+
+  /* when viewing a PDF, hide the left pane */
+  body.viewing .left { display: none !important; }
+
+  /* right pane becomes “viewer screen” */
+  body.viewing .right{
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    margin: 0;
+    border: 0;
+    padding: 10px;
+    background: #050805;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* PDF fills remaining space */
+  body.viewing .pdf{
+    flex: 1 1 auto;
+    width: 100%;
+    height: auto !important;
+    min-height: 70dvh;
+    border: 1px solid rgba(64,255,106,.22);
+    background: #000;
+  }
+
+  /* add a mobile back button (we’ll create it in JS) */
+  .mobileBackBtn{
+    display: inline-block;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    border: 1px solid rgba(64,255,106,.22);
+    background: rgba(64,255,106,.08);
+    color: rgba(64,255,106,1);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    cursor: pointer;
+  }
+}
+
 
 
 
