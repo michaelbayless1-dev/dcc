@@ -119,7 +119,6 @@ body{
 
 .pdf{
   width:100%;
-  height:100%;
   border:1px solid var(--line);
   background:#000;
 }
@@ -202,7 +201,6 @@ body {
 /* Make iframe behave on mobile */
 .pdf {
   width: 100%;
-  height: 70dvh;          /* good default for phones */
   border: 0;
 }
 
@@ -375,4 +373,39 @@ footer.bar {
   position: sticky;
   bottom: 0;
   z-index: 9999;
+}
+
+/* ===== Viewer sizing fix: PDF readable + no clipping ===== */
+
+/* Right pane becomes a vertical layout: title + viewer */
+.right {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Viewer title never shrinks weirdly */
+#viewerTitle {
+  flex: 0 0 auto;
+}
+
+/* Hide/show blocks don't break flex sizing */
+#idle, #locked {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* The PDF iframe must flex and be allowed to shrink inside the pane */
+.pdf {
+  flex: 1 1 auto;
+  min-height: 0;         /* critical to prevent clipping */
+  width: 100%;
+  height: auto !important; /* override any fixed heights */
+  border: 1px solid rgba(64,255,106,.22);
+  background: #000;
+}
+
+/* Optional: give the viewer a minimum height so PDFs aren't tiny */
+@media (min-width: 901px) {
+  .pdf { min-height: 520px; }
 }
