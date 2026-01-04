@@ -595,6 +595,10 @@ function toggleHelp(){
     help.classList.add("hidden");
     beepTick();
   }
+   if (e.key === "Escape" && help && !help.classList.contains("hidden")) {
+  e.preventDefault();
+  toggleHelp();
+}
 }
 
 // ===================== EXIT =====================
@@ -755,5 +759,6 @@ function boot(){
   beepTick();
 }
 boot();
+
 
 
