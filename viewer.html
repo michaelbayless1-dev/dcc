@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>DCC // VIEWER</title>
+  <style>
+    :root { color-scheme: dark; }
+    html, body { height: 100%; margin: 0; background: #050805; color: #8fffa0; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    .bar {
+      position: sticky; top: 0; z-index: 10;
+      display: flex; gap: 10px; align-items: center; justify-content: space-between;
+      padding: 10px 12px; border-bottom: 1px solid rgba(64,255,106,.22);
+      background: rgba(0,0,0,.85);
+    }
+    .btn {
+      border: 1px solid rgba(64,255,106,.22);
+      background: rgba(64,255,106,.10);
+      color: #8fffa0;
+      padding: 10px 12px;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      cursor: pointer;
+    }
+    .btn:active { transform: translateY(1px); }
+    .title { opacity: .9; font-size: 13px; }
+    .wrap { height: calc(100dvh - 52px); }
+    /* Use iframe; many browsers give better built-in controls here than inside your DOS layout */
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: #000;
+    }
+    .hint { font-size: 12px; opacity: .7; }
+    a { color: #8fffa0; }
+  </style>
+</head>
+<body>
+  <div class="bar">
+    <button class="btn" id="backBtn">← Back to Terminal</button>
+    <div class="title" id="docTitle">VIEWER</div>
+    <a class="hint" id="openNative" target="_blank" rel="noopener">Open in system viewer</a>
+  </div>
+
+  <div class="wrap">
+    <iframe id="frame" title="PDF Viewer"></iframe>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    const file = params.get("file");
+    const name = params.get("name") || "DOCUMENT";
+
+    const frame = document.getElementById("frame");
+    const docTitle = document.getElementById("docTitle");
+    const openNative = document.getElementById("openNative");
+
+    docTitle.textContent = name;
+
+    if (!file) {
+      docTitle.textContent = "NO FILE SPECIFIED";
+    } else {
+      // Try to make it readable: page-width fits better on phones
+      const src = file + "#zoom=page-width";
+      frame.src = src;
+      openNative.href = file;
+    }
+
+    document.getElementById("backBtn").addEventListener("click", () => {
+      // Prefer history back (keeps you in the same folder state if you use hash later)
+      if (history.length > 1) history.back();
+      else location.href = "index.html";
+    });
+  </script>
+</body>
+</html>
