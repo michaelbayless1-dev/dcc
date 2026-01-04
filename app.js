@@ -7,24 +7,17 @@
    - Typing cursor animation (idle + lock prompt)
    - Fake disk access delay when opening folders/files
 */
-function toggleHelp(){
-  ensureHelp();
-  if (!help) return;
 
-  var isHidden = help.classList.contains("hidden");
-
-  if (isHidden){
-    help.classList.remove("hidden");
-    help.style.display = "grid";   // show
-    beepTick && beepTick();
-  } else {
-    help.classList.add("hidden");
-    help.style.display = "none";   // force hide even if CSS is weird
-    beepTick && beepTick();
-  }
-}
 console.log("DCC-DOS app.js loaded");
 
+function toggleHelp(){
+  var el = document.getElementById("help");
+  if (!el) {
+    console.warn("Help element #help not found in DOM.");
+    return;
+  }
+  el.classList.toggle("hidden");
+}
 // --- F1 trap (capture phase) so browser help doesn't steal it ---
 (function(){
   function isF1(e){
@@ -600,6 +593,19 @@ function toggleHelp(){
   toggleHelp();
 }
 }
+window.addEventListener("keydown", function(e){
+  if (e.key === "F1" || e.key === "Help") {
+    e.preventDefault();
+    toggleHelp();
+  }
+  if (e.key === "Escape") {
+    var el = document.getElementById("help");
+    if (el && !el.classList.contains("hidden")) {
+      e.preventDefault();
+      toggleHelp();
+    }
+  }
+}, { capture: true });
 
 // ===================== EXIT =====================
 function exitSession(){
@@ -759,6 +765,7 @@ function boot(){
   beepTick();
 }
 boot();
+
 
 
 
