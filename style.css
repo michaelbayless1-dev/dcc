@@ -324,3 +324,56 @@ footer.bar {
   }
 }
 
+/* ===== Desktop: ALWAYS 2-column; fixed terminal height; left list scrolls ===== */
+@media (min-width: 901px){
+
+  /* Force the desktop layout model */
+  .wrap{
+    display: grid !important;
+    grid-template-columns: 380px 1fr !important;
+    grid-template-rows: 1fr !important;
+    overflow: hidden !important;
+    min-height: 0 !important;
+  }
+
+  /* Both panes must be clamped to the available height */
+  .left, .right{
+    min-height: 0 !important;
+    height: 100% !important;
+  }
+
+  /* LEFT: fixed shell; only the directory list scrolls */
+  .left{
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+  }
+
+  .left .list{
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Keep the hint block visible but not layout-breaking */
+  .left .hint{
+    flex: 0 0 auto !important;
+  }
+
+  /* RIGHT: fixed shell; PDF fills remaining space */
+  .right{
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+  }
+
+  iframe.pdf{
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: block !important;
+  }
+}
+
