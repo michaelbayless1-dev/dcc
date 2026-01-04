@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>DCC // DOS ARCHIVE</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<div id="help" class="help hidden" role="dialog" aria-modal="true">
+  <div class="helpBox">
+    <div class="panelTitle">DCC-DOS HELP</div>
+    <div class="mono">
+      <div><b>F1</b>  Help (toggle)</div>
+      <div><b>F3</b>  Open selected item</div>
+      <div><b>F5</b>  Refresh directory</div>
+      <div><b>F10</b> Exit session</div>
+      <br/>
+      <div><b>↑/↓</b> Move selection</div>
+      <div><b>Enter</b> Open</div>
+      <div><b>Backspace</b> Up one level</div>
+      <br/>
+      <div class="dim">NOTE: “LOCKED” files require a passphrase.</div>
+    </div>
+    <div class="helpFooter dim">Press F1 or Esc to close</div>
+  </div>
+</div>
+
+<section class="left" id="paneLeft">
+...
+</section>
+
+<section class="right" id="paneRight">
+...
+</section>
+
+
+<body>
+  <div class="panelTitle" id="pathTitle">C:\DCC\
+  </div>
+
+  <div class="crt">
+    <header class="bar">
+      <div>DCC-DOS v1.3  (C:)  ACCESS: RESTRICTED</div>
+      <div id="clock"></div>
+    </header>
+
+    <main class="wrap">
+      <section class="left">
+        <div class="panelTitle">C:\DCC\ARCHIVE\1983\BATON_ROUGE\</div>
+        <div id="list" class="list"></div>
+
+        <div class="hint">
+          <div class="panelTitle">SYSTEM NOTE</div>
+          <div class="mono dim">
+            Some files require a passphrase.<br/>
+            Hint: it is present in plain text across the archive.
+          </div>
+        </div>
+      </section>
+
+      <section class="right">
+        <div class="panelTitle" id="viewerTitle">VIEWER</div>
+
+        <div id="locked" class="locked hidden">
+          <div class="big">FILE LOCKED</div>
+          <div class="mono dim">Enter passphrase:</div>
+          <input id="pw" class="pw" autocomplete="off" spellcheck="false" />
+          <button id="unlockBtn" class="btn">UNLOCK</button>
+          <div id="pwMsg" class="mono warn"></div>
+        </div>
+
+        <iframe id="pdf" class="pdf hidden" title="PDF Viewer"></iframe>
+		
+
+        <div id="idle" class="idle">
+          <div class="big">DCC ARCHIVE TERMINAL</div>
+          <div class="mono dim">Select a file on the left to open.</div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="bar dim">
+  <div>
+    F1 HELP &nbsp; F3 OPEN &nbsp; F5 REFRESH &nbsp; F10 EXIT
+    &nbsp; | &nbsp;
+    <a href="mailto:amidophenolate@gmail.com" class="cmdlink">
+      CONTACT YOUR SUPERIOR
+    </a>
+  </div>
+  <div>SESSION: ANON</div>
+</footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
+
