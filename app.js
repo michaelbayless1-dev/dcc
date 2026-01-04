@@ -39,6 +39,11 @@ function toggleHelp(){
     e.stopPropagation();
   }, { capture: true });
 })();
+function isMobile(){
+  return window.matchMedia &&
+         window.matchMedia("(max-width: 900px)").matches;
+}
+
 
 // ===================== CONFIG =====================
 var PASSWORD = "GATORWIDOW"; // puzzle gate only (not real security)
@@ -574,7 +579,24 @@ function openPdfNode(f, lockedNow){
   showLock(f.name);
   beepWarn();
 }
+function openFile(idx){
+  const f = FILES[idx];
 
+  // OPTION 3: on phones, open PDFs in a new tab
+  if (isMobile() && !f.locked){
+    window.open(f.path, "_blank");
+    return;
+  }
+
+  if (!f.locked){
+    showPDF(f.path, f.name);
+    return;
+  }
+
+  // locked file
+  pendingLockedFile = f;
+  showLock(f.name);
+}
 function tryUnlock(){
   if (!pendingLockedFile){
     beepWarn();
@@ -793,6 +815,7 @@ function boot(){
   beepTick();
 }
 boot();
+
 
 
 
