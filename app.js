@@ -147,6 +147,32 @@ var currentEntries = [];
 // Disk busy lock (prevents double-open spam)
 var diskBusy = false;
 
+function isMobile(){
+  return window.matchMedia && window.matchMedia("(max-width: 900px)").matches;
+}
+
+function enterMobileViewer(){
+  document.body.classList.add("viewing");
+
+  // create Back button once
+  if (!document.getElementById("mobileBackBtn")) {
+    const btn = document.createElement("button");
+    btn.id = "mobileBackBtn";
+    btn.className = "mobileBackBtn";
+    btn.textContent = "BACK TO FILES";
+    btn.addEventListener("click", exitMobileViewer);
+    // put it at top of right pane
+    const rightPane = document.querySelector(".right");
+    rightPane.insertBefore(btn, rightPane.firstChild);
+  }
+}
+
+function exitMobileViewer(){
+  document.body.classList.remove("viewing");
+}
+
+
+
 // ===================== HELP OVERLAY (auto-create if missing) =====================
 function ensureHelp(){
   if (help) return;
@@ -296,15 +322,16 @@ function showIdle(message){
 }
 
 function showPDF(path, title){
-  if (viewerTitle) viewerTitle.textContent = "VIEWER: " + title;
+  viewerTitle.textContent = `VIEWER: ${title}`;
+  pdf.src = path;
 
-  if (pdf) {
-    pdf.src = path + "#view=FitH";
-    pdf.classList.remove("hidden");
-  }
-  if (locked) locked.classList.add("hidden");
-  if (idle) idle.classList.add("hidden");
+  pdf.classList.remove("hidden");
+  locked.classList.add("hidden");
+  idle.classList.add("hidden");
+
+  if (isMobile()) enterMobileViewer();
 }
+
 
 function showLock(title){
   if (viewerTitle) viewerTitle.textContent = "VIEWER: " + title;
@@ -621,6 +648,7 @@ function exitSession(){
     while (navStack.length > 2) navStack.pop();
     selectedIndex = 0;
     updateLeftPane();
+    exitMobileViewer();
 
     // idle message + cursor
     showIdle("Session terminated. Press F5 to reinitialize.");
@@ -765,6 +793,7 @@ function boot(){
   beepTick();
 }
 boot();
+
 
 
 
