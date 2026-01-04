@@ -9,6 +9,20 @@
 
 console.log("DCC-DOS app.js loaded");
 
+
+// ======================= Mobile path to pic ==================
+function isMobile(){
+  return window.matchMedia("(max-width: 900px)").matches;
+}
+
+// Convert a PDF path to your mobile-image folder path
+// Example: doc/00_START_HERE/000_READ_THIS_FIRST.pdf  ->  m/00_START_HERE/000_READ_THIS_FIRST
+function mobileFolderForPdf(pdfPath){
+  var p = pdfPath.replace(/^doc\//, "m/");
+  p = p.replace(/\.pdf$/i, ""); // strip extension
+  return p;
+}
+
 // ===================== CONFIG =====================
 var PASSWORD = "GATORWIDOW"; // puzzle gate only (not real security)
 
@@ -187,6 +201,34 @@ function showIdle(msg){
 
   ensureCursor(mono || idle);
 }
+function isMobile(){
+  return window.matchMedia("(max-width: 900px)").matches;
+}
+
+// doc/.../file.pdf  ->  m/.../file
+function mobileFolderForPdf(pdfPath){
+  var p = (pdfPath || "").replace(/\\/g, "/");         // normalize slashes
+  p = p.replace(/^(\.?\/)?dos\//i, "");               // remove leading DOS/ if any
+  p = p.replace(/^(\.?\/)?/i, "");                    // remove leading ./ if any
+  p = p.replace(/^doc\//i, "m/");                     // doc/... -> m/...
+  p = p.replace(/\.pdf$/i, "");                       // remove .pdf
+  return p;
+}
+
+
+function openForDevice(pdfPath, displayName){
+  if (isMobile()){
+    var folder = mobileFolderForPdf(pdfPath);
+    var url = "mobile.html?folder=" + encodeURIComponent(folder) +
+              "&name=" + encodeURIComponent(displayName || "");
+    console.log("MOBILE URL:", url);
+    window.location.href = url;
+    return;
+  }
+  showPDF(pdfPath, displayName);
+}
+
+
 
 function showPDF(path, title){
   if (viewerTitle) viewerTitle.textContent = "VIEWER: " + title;
@@ -197,6 +239,9 @@ function showPDF(path, title){
   if (locked) locked.classList.add("hidden");
   if (idle) idle.classList.add("hidden");
 }
+
+
+
 
 function showLock(title){
   if (viewerTitle) viewerTitle.textContent = "VIEWER: " + title;
@@ -378,7 +423,7 @@ function activateSelected(){
     flashDiskMessage("OPENING: " + entry.name);
     diskDelay(function(){
       if (!lockedNow){
-        showPDF(entry.path, entry.name);
+        openForDevice(entry.path, entry.name);
         beepOk();
       } else {
         pendingLockedFile = entry;
@@ -403,8 +448,9 @@ function tryUnlock(){
     if (pwMsg) pwMsg.textContent = "DECRYPTING... OK";
     beepOk();
     diskDelay(function(){
-      showPDF(pendingLockedFile.path, pendingLockedFile.name);
-    });
+    openForDevice(pendingLockedFile.path, pendingLockedFile.name);
+});
+
   } else {
     if (pwMsg) pwMsg.textContent = "BAD COMMAND OR FILE NAME";
     beepWarn();
