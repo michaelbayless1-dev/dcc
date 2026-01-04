@@ -1,31 +1,28 @@
 /* =========================================================
-   DCC // DOS ARCHIVE  (clean consolidated stylesheet)
-   - Desktop: 2-column grid, big readable PDF on right
-   - Mobile: stacked layout
-   - Footer always visible (no cut-off)
+   DCC // DOS ARCHIVE (DESKTOP-ONLY STABLE CSS)
+   - Always 2-column grid
+   - Fixed terminal height
+   - Left list scrolls; right viewer fills
    ========================================================= */
 
-/* ---------- Viewport stability (fixes vh address-bar issues) ---------- */
-:root {
+:root{
   --app-h: 100vh;
   --bg: #050805;
   --fg: rgba(180,255,210,0.92);
   --dim: rgba(180,255,210,0.62);
   --line: rgba(64,255,106,0.22);
-  --glow: rgba(64,255,106,0.12);
-  --warn: rgba(255,120,120,0.9);
+  --warn: rgba(255,120,120,0.90);
   --pad: 12px;
   color-scheme: dark;
 }
 
-@supports (height: 100dvh) {
-  :root { --app-h: 100dvh; }
+@supports (height: 100dvh){
+  :root{ --app-h: 100dvh; }
 }
 
-/* ---------- Base reset ---------- */
-* { box-sizing: border-box; }
+*{ box-sizing: border-box; }
 
-html, body {
+html, body{
   height: 100%;
   margin: 0;
   background: var(--bg);
@@ -34,57 +31,52 @@ html, body {
                "Liberation Mono", "Courier New", monospace;
 }
 
-/* Keep the frame stable; scroll happens inside panes */
-body {
+body{
   height: var(--app-h);
   overflow: hidden;
 }
 
-/* ---------- Utility ---------- */
-.hidden { display: none !important; }
-.mono { font-family: inherit; }
-.dim { opacity: 0.72; }
-.warn { color: var(--warn); }
+.hidden{ display:none !important; }
+.mono{ font-family: inherit; }
+.dim{ opacity: 0.72; }
+.warn{ color: var(--warn); }
 
-/* ---------- CRT wrapper ---------- */
-.crt {
+/* CRT shell */
+.crt{
   height: var(--app-h);
-  max-height: var(--app-h);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding: 0;
 }
 
-/* Optional CRT scanline vibe (lightweight) */
+/* scanline vibe */
 .crt::before{
   content:"";
   pointer-events:none;
   position:fixed;
   inset:0;
-  background:
-    linear-gradient(to bottom,
-      rgba(0,0,0,0.05),
-      rgba(0,0,0,0.05) 1px,
-      rgba(0,0,0,0.00) 2px);
+  background: linear-gradient(to bottom,
+    rgba(0,0,0,0.05),
+    rgba(0,0,0,0.05) 1px,
+    rgba(0,0,0,0.00) 2px);
   background-size: 100% 3px;
   opacity: 0.22;
   mix-blend-mode: multiply;
 }
 
-/* ---------- Top/Bottom bars ---------- */
-.bar {
+/* bars */
+.bar{
   flex: 0 0 auto;
-  display: flex;
+  display:flex;
   justify-content: space-between;
+  align-items:center;
   gap: 12px;
-  align-items: center;
   padding: 10px 12px;
   border-bottom: 1px solid var(--line);
   background: rgba(0,0,0,0.65);
 }
 
-footer.bar {
+footer.bar{
   border-top: 1px solid var(--line);
   border-bottom: 0;
   position: sticky;
@@ -93,35 +85,20 @@ footer.bar {
   padding-bottom: calc(10px + env(safe-area-inset-bottom));
 }
 
-/* ---------- Main layout container ---------- */
-.wrap {
+/* main grid (desktop only) */
+.wrap{
   flex: 1 1 auto;
-  min-height: 0;         /* critical for flex child overflow */
-  overflow: hidden;      /* no page scroll; panes scroll */
-  padding: var(--pad);
+  min-height: 0;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  grid-template-rows: minmax(0, 1fr);
   gap: var(--pad);
+  padding: var(--pad);
 }
 
-/* Desktop: 2-column grid */
-@media (min-width: 901px) {
-  .wrap {
-    display: grid;
-    grid-template-columns: 380px 1fr;
-  }
-}
-
-/* Mobile: stacked */
-@media (max-width: 900px) {
-  .wrap {
-    display: flex;
-    flex-direction: column;
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-}
-
-/* ---------- Panes ---------- */
-.left, .right {
+/* panes */
+.left, .right{
   border: 1px solid var(--line);
   background: rgba(0,0,0,0.55);
   box-shadow: 0 0 18px rgba(0,0,0,0.55);
@@ -130,19 +107,14 @@ footer.bar {
   min-height: 0;
 }
 
-/* Left pane scrolls on desktop */
-@media (min-width: 901px) {
-  .left { overflow: auto; }
-  .right { overflow: hidden; display: flex; flex-direction: column; }
+/* Left: fixed shell; only list scrolls */
+.left{
+  display:flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-/* On mobile both can scroll naturally */
-@media (max-width: 900px) {
-  .left, .right { overflow: visible; }
-}
-
-/* ---------- Titles ---------- */
-.panelTitle {
+.panelTitle{
   font-size: 12px;
   letter-spacing: 0.6px;
   text-transform: uppercase;
@@ -150,33 +122,37 @@ footer.bar {
   margin-bottom: 8px;
 }
 
-/* ---------- File list ---------- */
-.list {
+/* List scroller */
+.list{
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
   border: 1px solid var(--line);
   background: rgba(0,0,0,0.42);
   padding: 6px;
   border-radius: 6px;
 }
 
-.item {
+.item{
   padding: 9px 10px;
   border-radius: 6px;
   cursor: pointer;
   user-select: none;
-  display: flex;
+  display:flex;
   justify-content: space-between;
   gap: 10px;
 }
 
-.item:hover {
-  background: rgba(64,255,106,0.08);
+.item:hover{ background: rgba(64,255,106,0.08); }
+
+.item.selected{
+  outline: 1px solid rgba(64,255,106,0.45);
+  background: rgba(64,255,106,0.10);
 }
 
-.tag {
-  opacity: 0.75;
-}
+.tag{ opacity: 0.75; }
 
-.hint {
+.hint{
   margin-top: 12px;
   padding: 10px;
   border: 1px solid var(--line);
@@ -184,24 +160,31 @@ footer.bar {
   background: rgba(0,0,0,0.35);
 }
 
-/* ---------- Viewer states ---------- */
-.idle, .locked {
-  flex: 1 1 auto;
-  min-height: 0;
-  display: grid;
-  place-items: center;
-  padding: 14px;
-  text-align: center;
+/* Right: viewer shell; PDF fills */
+.right{
+  display:flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-.big {
+/* viewer states */
+.idle, .locked{
+  flex: 1 1 auto;
+  min-height: 0;
+  display:grid;
+  place-items: center;
+  padding: 14px;
+  text-align:center;
+}
+
+.big{
   font-size: 20px;
   letter-spacing: 1px;
   margin-bottom: 6px;
 }
 
-/* Password input/button */
-.pw {
+/* input/button */
+.pw{
   width: min(420px, 90%);
   padding: 10px 12px;
   border: 1px solid var(--line);
@@ -210,59 +193,50 @@ footer.bar {
   outline: none;
   border-radius: 6px;
   margin-top: 10px;
-  font-size: 16px; /* prevents iOS zoom */
+  font-size: 16px;
 }
 
-.btn {
+.btn{
   margin-top: 10px;
   padding: 10px 12px;
   border: 1px solid var(--line);
   background: rgba(64,255,106,0.10);
   color: var(--fg);
   border-radius: 6px;
-  cursor: pointer;
-  min-height: 44px; /* mobile touch target */
+  cursor:pointer;
+  min-height: 44px;
   font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 0.6px;
 }
 
-.btn:active { transform: translateY(1px); }
+.btn:active{ transform: translateY(1px); }
 
-/* ---------- PDF iframe (critical sizing) ---------- */
-.pdf {
+/* PDF iframe fills remaining space */
+.pdf{
   flex: 1 1 auto;
-  min-height: 0;          /* prevents clipping */
+  min-height: 0;
   width: 100% !important;
   height: 100% !important;
   border: 1px solid var(--line);
-  background: #000;
+  background:#000;
   border-radius: 6px;
 }
 
-/* On mobile, give the embedded iframe a reasonable height if you still use it */
-@media (max-width: 900px) {
-  .pdf {
-    height: 60dvh !important;
-    min-height: 60dvh;
-  }
-}
-
-/* ---------- Help modal (if you use #help) ---------- */
-.help {
+/* help modal */
+.help{
   position: fixed;
   inset: 0;
-  display: grid;
-  place-items: center;
+  display:grid;
+  place-items:center;
   background: rgba(0,0,0,0.70);
   z-index: 9999;
 }
 
-.helpBox {
+.helpBox{
   width: min(740px, 92vw);
   max-height: 85dvh;
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
+  overflow:auto;
   padding: 14px;
   border: 1px solid var(--line);
   border-radius: 10px;
@@ -270,212 +244,17 @@ footer.bar {
   box-shadow: 0 0 30px rgba(0,0,0,0.85);
 }
 
-/* Make small screens easier to tap/read */
-@media (max-width: 420px) {
-  .panelTitle { font-size: 11px; }
-  .item { padding: 11px 10px; }
-}
-/* ===== Keep terminal height static; left directory scrolls only ===== */
-@media (min-width: 901px){
-
-  /* Clamp the main area between header/footer */
-  .wrap{
-    height: auto;
-    min-height: 0;
-    align-content: stretch;
-  }
-
-  /* Make each pane a fixed-height column that doesn't grow the page */
-  .left, .right{
-    height: 100%;
-    min-height: 0;
-  }
-
-  /* Left pane: fixed shell with internal scrolling area */
-  .left{
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;      /* prevent left content from expanding layout */
-  }
-
-  /* The file list is the scroller */
-  .left .list{
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  /* Keep hint block visible but not layout-breaking */
-  .left .hint{
-    flex: 0 0 auto;
-  }
-
-  /* Right pane: fixed shell, PDF fills remaining space */
-  .right{
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-
-  iframe.pdf{
-    flex: 1 1 auto;
-    min-height: 0;
-  }
+.helpFooter{
+  margin-top: 10px;
 }
 
-/* ===== Desktop: ALWAYS 2-column; fixed terminal height; left list scrolls ===== */
-@media (min-width: 901px){
-
-  /* Force the desktop layout model */
-  .wrap{
-    display: grid !important;
-    grid-template-columns: 380px 1fr !important;
-    grid-template-rows: 1fr !important;
-    overflow: hidden !important;
-    min-height: 0 !important;
-  }
-
-  /* Both panes must be clamped to the available height */
-  .left, .right{
-    min-height: 0 !important;
-    height: 100% !important;
-  }
-
-  /* LEFT: fixed shell; only the directory list scrolls */
-  .left{
-    display: flex !important;
-    flex-direction: column !important;
-    overflow: hidden !important;
-  }
-
-  .left .list{
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
-    overflow: auto !important;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  /* Keep the hint block visible but not layout-breaking */
-  .left .hint{
-    flex: 0 0 auto !important;
-  }
-
-  /* RIGHT: fixed shell; PDF fills remaining space */
-  .right{
-    display: flex !important;
-    flex-direction: column !important;
-    overflow: hidden !important;
-  }
-
-  iframe.pdf{
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    display: block !important;
-  }
+/* footer link */
+.cmdlink{
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px dotted rgba(180,255,210,0.45);
 }
 
-/* ===== Force desktop layout by default; only stack on small screens ===== */
-
-/* DEFAULT (desktop/tablet): side-by-side columns */
-.wrap{
-  display: grid !important;
-  grid-template-columns: 380px 1fr !important;
-  gap: 12px !important;
-  overflow: hidden !important;
+.cmdlink:hover{
+  border-bottom-color: rgba(180,255,210,0.80);
 }
-
-/* Panes behave correctly in a fixed-height terminal */
-.left, .right{
-  min-height: 0 !important;
-}
-
-/* Left scrolls; right stays fixed with PDF filling space */
-.left{
-  overflow: auto !important;
-}
-.right{
-  display: flex !important;
-  flex-direction: column !important;
-  overflow: hidden !important;
-}
-iframe.pdf{
-  flex: 1 1 auto !important;
-  min-height: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-}
-
-/* ONLY on phones: stack */
-@media (max-width: 900px){
-  .wrap{
-    display: flex !important;
-    flex-direction: column !important;
-    overflow: auto !important;
-    -webkit-overflow-scrolling: touch;
-  }
-}
-/* Force left/right into separate grid columns */
-@media (min-width: 901px){
-  .wrap{ display:grid !important; grid-template-columns: 380px 1fr !important; }
-  .wrap > .left{ grid-column: 1 !important; grid-row: 1 !important; }
-  .wrap > .right{ grid-column: 2 !important; grid-row: 1 !important; }
-}
-
-@media (min-width: 901px){
-  .wrap > .left, .wrap > .right{
-    position: relative !important; /* cancels accidental fixed/absolute */
-  }
-}
-
-/* ===== Fix: desktop (>=901px) must have a real height; prevent “disappearing” ===== */
-@media (min-width: 901px){
-  /* Ensure the app shell actually constrains the main area */
-  .crt{
-    height: var(--app-h) !important;
-  }
-
-  /* Give main area a real height between header/footer */
-  .wrap{
-    height: auto !important;
-    min-height: 0 !important;
-    flex: 1 1 auto !important;
-    overflow: hidden !important;
-
-    display: grid !important;
-    grid-template-columns: 380px 1fr !important;
-    grid-template-rows: minmax(0, 1fr) !important;
-  }
-
-  /* Ensure grid children can shrink and scroll correctly */
-  .left, .right{
-    min-height: 0 !important;
-    overflow: hidden !important;
-  }
-
-  /* Left: internal scroll for list */
-  .left{
-    display: flex !important;
-    flex-direction: column !important;
-  }
-  .left .list{
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
-    overflow: auto !important;
-  }
-
-  /* Right: PDF fills */
-  .right{
-    display: flex !important;
-    flex-direction: column !important;
-  }
-  iframe.pdf{
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-  }
-}
-
