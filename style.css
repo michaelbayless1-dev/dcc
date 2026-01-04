@@ -1,0 +1,337 @@
+:root{
+  --bg:#050805;
+  --fg:#40ff6a;
+  --dim:rgba(64,255,106,.65);
+  --warn:#ff4d4d;
+  --line:rgba(64,255,106,.22);
+}
+
+*{ box-sizing:border-box; }
+html,body{ height:100%; margin:0; }
+body{
+  background:#000;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  color:var(--fg);
+}
+.hidden { 
+  display: none !important; 
+}
+.help {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(0,0,0,0.6);
+  z-index: 9999;
+}
+
+.helpBox {
+  width: min(720px, 92vw);
+  padding: 14px;
+  border: 1px solid rgba(180,255,210,0.35);
+  background: rgba(0,0,0,0.88);
+  box-shadow: 0 0 30px rgba(0,0,0,0.85);
+}
+.crt{
+  height:100%;
+  padding:14px;
+  background: var(--bg);
+  position:relative;
+  overflow:hidden;
+}
+
+/* scanlines + glow */
+.crt::before{
+  content:"";
+  position:absolute; inset:0;
+  background:
+    repeating-linear-gradient(0deg,
+      rgba(0,0,0,.35), rgba(0,0,0,.35) 1px,
+      rgba(0,0,0,0) 2px, rgba(0,0,0,0) 4px);
+  pointer-events:none;
+  mix-blend-mode: multiply;
+  opacity:.55;
+}
+.crt::after{
+  content:"";
+  position:absolute; inset:-30px;
+  background: radial-gradient(circle at 50% 40%, rgba(64,255,106,.14), transparent 55%);
+  pointer-events:none;
+}
+
+.bar{
+  display:flex; justify-content:space-between; gap:12px;
+  border:1px solid var(--line);
+  padding:8px 10px;
+  margin-bottom:12px;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+}
+
+.wrap{
+  display:grid;
+  grid-template-columns: 360px 1fr;
+  gap:12px;
+  height: calc(100% - 120px);
+}
+
+.left,.right{
+  border:1px solid var(--line);
+  padding:10px;
+  min-height:0;
+}
+
+.panelTitle{
+  border-bottom:1px solid var(--line);
+  padding-bottom:8px;
+  margin-bottom:10px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+}
+
+.list{
+  overflow:auto;
+  max-height: calc(100% - 140px);
+  border:1px solid var(--line);
+  padding:6px;
+}
+
+.item{
+  padding:6px 8px;
+  border-bottom:1px dashed rgba(64,255,106,.16);
+  cursor:pointer;
+}
+.item:hover{ background: rgba(64,255,106,.07); }
+.item .tag{ color: var(--dim); margin-left:8px; }
+
+.hint{
+  margin-top:10px;
+  border:1px solid var(--line);
+  padding:10px;
+}
+
+.right{ display:flex; flex-direction:column; min-height:0; }
+.idle, .locked{ margin-top:6px; }
+.big{ font-size:18px; letter-spacing:1px; margin-bottom:10px; }
+.mono{ font-size:13px; }
+.dim{ color:var(--dim); }
+.warn{ color:var(--warn); margin-top:10px; min-height:18px; }
+
+.pdf{
+  width:100%;
+  height:100%;
+  border:1px solid var(--line);
+  background:#000;
+}
+
+.hidden{ display:none; }
+
+.pw{
+  margin-top:8px;
+  width: min(420px, 100%);
+  padding:10px;
+  color:var(--fg);
+  background:#010301;
+  border:1px solid var(--line);
+  outline:none;
+  text-transform:uppercase;
+}
+.btn{
+  margin-top:10px;
+  padding:10px 14px;
+  color:var(--fg);
+  background: rgba(64,255,106,.08);
+  border:1px solid var(--line);
+  cursor:pointer;
+}
+.btn:hover{ background: rgba(64,255,106,.14); }
+
+.item.selected {
+  outline: 1px dashed rgba(180, 255, 210, 0.8);
+  background: rgba(120, 255, 180, 0.08);
+}
+
+.help {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(0,0,0,0.6);
+  z-index: 9999;
+}
+
+.helpBox {
+  width: min(720px, 92vw);
+  padding: 14px;
+  border: 1px solid rgba(180,255,210,0.35);
+  background: rgba(0,0,0,0.85);
+  box-shadow: 0 0 30px rgba(0,0,0,0.8);
+}
+
+.helpFooter {
+  margin-top: 10px;
+}
+/* ---------------------------
+   Mobile + Responsive DOS UI
+---------------------------- */
+
+/* Make sizing predictable */
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+/* Prevent horizontal scroll on phones */
+body {
+  overflow-x: hidden;
+}
+
+/* If your outer CRT container is fixed-width anywhere, kill it */
+.crt {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Ensure the app uses full viewport height */
+.wrap {
+  min-height: calc(100dvh - 80px); /* bars take space; adjust if needed */
+}
+
+/* Make iframe behave on mobile */
+.pdf {
+  width: 100%;
+  height: 70dvh;          /* good default for phones */
+  border: 0;
+}
+
+/* Make list scrollable on small screens */
+.list {
+  max-height: 45dvh;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Help modal fits small screens */
+.helpBox {
+  max-height: 85dvh;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Buttons + input: larger touch targets */
+.btn, .pw {
+  min-height: 44px;       /* Apple HIG touch target */
+  font-size: 16px;        /* prevents iOS zoom on focus */
+}
+
+/* Avoid iOS zoom when tapping input */
+input, button, textarea, select {
+  font-size: 16px;
+}
+
+/* Safe area padding for iPhones with notch */
+.bar {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* --------- Mobile breakpoint --------- */
+@media (max-width: 900px) {
+  /* Stack panes vertically */
+  .wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .left, .right {
+    width: 100%;
+  }
+
+  /* Make left pane shorter; right pane gets more room */
+  .left {
+    order: 1;
+  }
+
+  .right {
+    order: 2;
+  }
+
+  /* Left list becomes a scroll panel */
+  .list {
+    max-height: 33dvh;
+  }
+
+  /* Viewer gets most space */
+  .pdf {
+    height: 55dvh;
+  }
+}
+
+/* --------- Extra-small phones --------- */
+@media (max-width: 420px) {
+  .panelTitle {
+    font-size: 12px;
+  }
+
+  .item {
+    padding: 10px 8px; /* easier tapping */
+  }
+
+  .pdf {
+    height: 52dvh;
+  }
+}
+/* ===== Mobile: make PDFs readable (iPhone/Android) ===== */
+@media (max-width: 900px) {
+  /* stop fixed-height math from desktop layout */
+  .wrap { height: auto !important; min-height: auto !important; display: block !important; }
+
+  /* panes stack naturally */
+  .left, .right { width: 100% !important; }
+
+  /* when viewing a PDF, hide the left pane */
+  body.viewing .left { display: none !important; }
+
+  /* right pane becomes “viewer screen” */
+  body.viewing .right{
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    margin: 0;
+    border: 0;
+    padding: 10px;
+    background: #050805;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* PDF fills remaining space */
+  body.viewing .pdf{
+    flex: 1 1 auto;
+    width: 100%;
+    height: auto !important;
+    min-height: 70dvh;
+    border: 1px solid rgba(64,255,106,.22);
+    background: #000;
+  }
+
+  /* add a mobile back button (we’ll create it in JS) */
+  .mobileBackBtn{
+    display: inline-block;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    border: 1px solid rgba(64,255,106,.22);
+    background: rgba(64,255,106,.08);
+    color: rgba(64,255,106,1);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    cursor: pointer;
+  }
+}
+
+
+
+
