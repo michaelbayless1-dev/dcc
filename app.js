@@ -7,7 +7,22 @@
    - Typing cursor animation (idle + lock prompt)
    - Fake disk access delay when opening folders/files
 */
+function toggleHelp(){
+  ensureHelp();
+  if (!help) return;
 
+  var isHidden = help.classList.contains("hidden");
+
+  if (isHidden){
+    help.classList.remove("hidden");
+    help.style.display = "grid";   // show
+    beepTick && beepTick();
+  } else {
+    help.classList.add("hidden");
+    help.style.display = "none";   // force hide even if CSS is weird
+    beepTick && beepTick();
+  }
+}
 console.log("DCC-DOS app.js loaded");
 
 // --- F1 trap (capture phase) so browser help doesn't steal it ---
@@ -740,4 +755,5 @@ function boot(){
   beepTick();
 }
 boot();
+
 
