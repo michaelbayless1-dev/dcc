@@ -341,15 +341,12 @@ function showIdle(message){
 
 function showPDF(path, title){
   viewerTitle.textContent = `VIEWER: ${title}`;
-
-  // Force page-width (works in most desktop browsers)
-  const view = "#zoom=page-width";
-  pdf.src = path + view;
-
+  pdf.src = path; // no zoom hacks
   pdf.classList.remove("hidden");
   locked.classList.add("hidden");
   idle.classList.add("hidden");
 }
+
 
 
 
@@ -598,12 +595,29 @@ function openFile(idx){
   const f = FILES[idx];
 
   // OPTION 3: on phones, open PDFs in a new tab
-  if (isMobile()){
-  const url = "viewer.html?file=" + encodeURIComponent(f.path) +
-              "&name=" + encodeURIComponent(f.name);
-  window.location.href = url;
-  return;
+  function isMobile(){
+  return window.matchMedia("(max-width: 900px)").matches;
 }
+
+function openFile(idx){
+  const f = FILES[idx];
+
+  if (!f.locked && isMobile()){
+    const url = "viewer.html?file=" + encodeURIComponent(f.path) +
+                "&name=" + encodeURIComponent(f.name);
+    window.location.href = url;
+    return;
+  }
+
+  if (!f.locked){
+    showPDF(f.path, f.name);
+    return;
+  }
+
+  pendingLockedFile = f;
+  showLock(f.name);
+}
+
 
 
   if (!f.locked){
@@ -833,6 +847,7 @@ function boot(){
   beepTick();
 }
 boot();
+
 
 
 
