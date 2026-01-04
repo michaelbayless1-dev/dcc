@@ -409,3 +409,56 @@ footer.bar {
 @media (min-width: 901px) {
   .pdf { min-height: 520px; }
 }
+/* ===== Desktop restore: big readable PDF viewer ===== */
+@media (min-width: 901px) {
+
+  /* Keep the overall app layout (header / main / footer) */
+  .crt { display: flex; flex-direction: column; }
+
+  /* Main area fills between header/footer */
+  .wrap{
+    flex: 1 1 auto;
+    min-height: 0;
+    /* IMPORTANT: don't scroll the whole wrap; scroll left only */
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 420px 1fr; /* adjust left width if you want */
+    gap: 14px;
+    padding: 14px;
+  }
+
+  /* Left pane: the only scroller */
+  .left{
+    min-height: 0;
+    overflow: auto;
+  }
+
+  /* Right pane: fixed “viewer screen”, no scrolling */
+  .right{
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Controls/title stay at top */
+  #viewerTitle{
+    flex: 0 0 auto;
+  }
+
+  /* PDF viewer consumes remaining space */
+  iframe.pdf{
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+  }
+
+  /* If you have the locked/idle panels, they should also fill area */
+  #locked, #idle{
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+}
+
