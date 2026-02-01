@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-9SH2566EP4"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-9SH2566EP4');
+</script>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>DCC // MOBILE VIEWER</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="assets/css/entropy-glitch.css" />
+  <link rel="stylesheet" href="assets/css/entropy-effects.css" />
+ 
+  <style>
+  /* Mobile viewer must be scrollable even if desktop site locks body */
+  html, body{
+    height: 100%;
+    overflow: auto !important;
+  }
+
+  /* Override desktop CRT “fixed viewport” behavior */
+  .crt{
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow: visible !important;
+  }
+
+  /* The main area should scroll naturally */
+  main.wrap{
+    display: block !important;
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 12px !important;
+  }
+
+  /* Make sure the pages container can grow */
+  #pages.pages{
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+
+  /* Images full width, stack vertically */
+  #pages img{
+    width: 100% !important;
+    height: auto !important;
+    display: block !important;
+    border: 1px solid rgba(64,255,106,0.22);
+    border-radius: 6px;
+    background: #000;
+  }
+
+  .viewerHead{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    align-items:center;
+  }
+  .tiny{ font-size:12px; opacity:.75; }
+  </style>
+
+</head>
+<div id="entropyDemon"></div>
+<div id="entropyBlackout"></div>
+
+<body>
+  <div class="crt">
+    <header class="bar">
+      <div id="title">MOBILE VIEWER</div>
+      <button id="backBtn" class="dcc-btn">[ BACK ]</button>
+    </header>
+
+    <main class="wrap">
+      <div class="viewerHead">
+        <div class="panelTitle" id="name">FILE</div>
+        <div class="tiny" id="count"></div>
+      </div>
+      <div id="pages" class="pages"></div>
+      <div id="err" class="warn mono"></div>
+    </main>
+
+    <footer class="bar dim">
+      <div>TIP: pinch-to-zoom works on images</div>
+      <div>SESSION: ANON</div>
+    </footer>
+  </div>
+
+  <!-- Entropy engine so mobile shares the same counter + demon -->
+  
+<script src="entropy-engine.v7.js"></script>
+<script src="entropy-effects.js"></script>
+<script>
+  const params = new URLSearchParams(location.search);
+  const folder = params.get("folder") || "";
+  const name   = params.get("name")   || "FILE";
+  const pdf    = params.get("pdf")    || "";
+
+  document.getElementById("name").textContent = name;
+  document.getElementById("backBtn").onclick = () => history.back();
+
+  // Tell entropy engine which doc was opened
+  if (pdf && window.DCC_onDocumentOpen) {
+    const p = pdf.startsWith("/") ? pdf : ("/" + pdf);
+    window.DCC_onDocumentOpen(p);
+  }
+
+  async function loadManifest(){
+    const res = await fetch(folder + "/manifest.json", { cache: "no-store" });
+    if (!res.ok) throw new Error("manifest.json not found for " + folder);
+    return await res.json();
+  }
+
+  function render(files){
+    const pages = document.getElementById("pages");
+    pages.innerHTML = "";
+    files.forEach((fn, i) => {
+      const img = document.createElement("img");
+      img.loading = "lazy";
+      img.alt = name + " page " + (i+1);
+      img.src = folder + "/" + fn;
+      pages.appendChild(img);
+    });
+    document.getElementById("count").textContent = files.length + " pages";
+  }
+
+  (async function init(){
+    try{
+      if (!folder) throw new Error("No folder specified.");
+      const files = await loadManifest();
+      render(files);
+    } catch(e){
+      document.getElementById("err").textContent = "ERROR: " + e.message;
+    }
+  })();
+</script>
+</body>
+</html>

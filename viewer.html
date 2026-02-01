@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>DCC Document Viewer</title>
+
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="assets/css/entropy-glitch.css" />
+  <link rel="stylesheet" href="assets/css/entropy-effects.css" />
+
+  <style>
+    body{ margin:0; font-family: monospace; }
+    .topbar{
+      display:flex; align-items:center; gap:10px;
+      padding:8px 10px; border-bottom:1px solid rgba(255,255,255,0.15);
+    }
+    .frame{ width:100vw; height:calc(100vh - 44px); border:0; }
+    .btn{
+      font-family: monospace;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.35);
+      color: inherit;
+      padding: 2px 8px;
+      cursor: pointer;
+      opacity: 0.9;
+    }
+    #entropyHud{ margin-left:auto; display:flex; align-items:center; gap:8px; opacity:0.9; }
+    #entropyResetBtn{ margin-left:8px; }
+  </style>
+</head>
+<div id="entropyDemon"></div>
+<div id="entropyBlackout"></div>
+
+<div id="dccResetModal" class="dcc-modal hidden">
+  <div class="dcc-modal-box terminal glitchable">
+    <pre class="dcc-modal-text">
+DCC CONTAINMENT NOTICE
+
+// ENTROPY STABILIZATION REQUESTED
+
+Entropy levels exceed nominal bounds.
+Stabilization may reduce localized effects.
+
+KNOWN SIDE EFFECTS:
+  - File ordering instability
+  - Directory reference drift
+  - Loss of prior observations
+
+THIS ACTION DOES NOT GUARANTEE SAFETY.
+
+Type CONFIRM to proceed.
+    </pre>
+
+    <input id="dccResetInput"
+           type="text"
+           autocomplete="off"
+           spellcheck="false"
+           placeholder="> " />
+
+    <div class="dcc-modal-actions">
+      <button id="dccResetCancel" class="dcc-btn">[ CANCEL ]</button>
+      <button id="dccResetConfirm" class="dcc-btn">[ EXECUTE ]</button>
+    </div>
+  </div>
+</div>
+
+
+<body>
+
+  <div class="topbar terminal glitchable">
+  <button id="backBtn" class="dcc-btn">[ BACK ]</button>
+
+
+  <div id="entropyHud" class="entropy-hud">
+    ENTROPY: <span id="entropyValue">000</span>
+    <span id="entropyStatus"></span>
+  </div>
+
+  <button id="entropyResetBtn" class="entropy-reset-btn" type="button">RESET</button>
+</div>
+
+
+  <iframe id="pdfFrame" class="frame" title="DCC Document"></iframe>
+
+  <script src="assets/js/entropy-engine.js"></script>
+<script>
+  // Back button logic
+  const backBtn = document.getElementById("backBtn");
+  if (backBtn) {
+    backBtn.addEventListener("click", () => {
+      // If there is history, use it
+      if (history.length > 1) {
+        history.back();
+      } else {
+        // Fallback: go back to DOS terminal
+        window.location.href = "index.html";
+      }
+    });
+  }
+
+  // Load PDF passed in query: ?file=/doc/..pdf
+  const params = new URLSearchParams(location.search);
+  const file = params.get("file");
+  if (file) {
+    // Keep it relative to site root
+    const clean = decodeURIComponent(file).replace(/\\/g,"/").replace(/^\/+/, "");
+    document.getElementById("pdfFrame").src = clean;
+  }
+</script>
+
+  <script src="entropy-engine.v7.js"></script>
+  <script src="entropy-effects.js"></script>
+  <script>
+(function () {
+  // Load PDF passed in query: ?file=/doc/..pdf&name=...
+  const urlParams = new URLSearchParams(window.location.search);
+  const file = urlParams.get("file");
+  const name = urlParams.get("name") || "";
+
+  if (!file) return;
+
+  const pdfUrl = new URL(file, window.location.origin);
+  const pathname = pdfUrl.pathname;
+
+  const frame = document.getElementById("pdfFrame");
+  if (frame) frame.src = pathname;
+
+  // Notify entropy engine (so PDF deltas apply here too)
+  if (typeof window.DCC_onDocumentOpen === "function") {
+    const p = pathname.startsWith("/") ? pathname : ("/" + pathname);
+    window.DCC_onDocumentOpen(p);
+  }
+})();
+</script>
+
+</body>
+</html>

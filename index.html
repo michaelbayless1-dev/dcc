@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-9SH2566EP4"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-9SH2566EP4');
+</script>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>DCC // DOS ARCHIVE</title>
+
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="assets/css/entropy-glitch.css" />
+  <link rel="stylesheet" href="assets/css/entropy-effects.css" />
+ 
+</head>
+<div id="entropyDemon"></div>
+<div id="entropyBlackout"></div>
+
+<div id="dccResetModal" class="dcc-modal hidden">
+  <div class="dcc-modal-box terminal glitchable">
+    <pre class="dcc-modal-text">
+DCC CONTAINMENT NOTICE
+
+// ENTROPY STABILIZATION REQUESTED
+
+Entropy levels exceed nominal bounds.
+Stabilization may reduce localized effects.
+
+KNOWN SIDE EFFECTS:
+  - File ordering instability
+  - Directory reference drift
+  - Loss of prior observations
+
+THIS ACTION DOES NOT GUARANTEE SAFETY.
+
+Type CONFIRM to proceed.
+    </pre>
+
+    <input id="dccResetInput"
+           type="text"
+           autocomplete="off"
+           spellcheck="false"
+           placeholder="> " />
+
+    <div class="dcc-modal-actions">
+      <button id="dccResetCancel" class="dcc-btn">[ CANCEL ]</button>
+      <button id="dccResetConfirm" class="dcc-btn">[ EXECUTE ]</button>
+    </div>
+  </div>
+</div>
+
+
+<body>
+  <div class="crt">
+    <header class="bar" id="dccTopBar">
+      <div>DCC-DOS v1.3  (C:)  ACCESS: RESTRICTED</div>
+
+      <div id="entropyHud" class="entropy-hud">
+        ENTROPY: <span id="entropyValue">000</span>
+        <span id="entropyStatus" class="entropy-status"></span>
+        <button id="entropyResetBtn" class="entropy-reset-btn" type="button">RESET</button>
+      </div>
+
+      <div id="clock"></div>
+    </header>
+
+    <div id="help" class="help hidden" role="dialog" aria-modal="true">
+      <div class="helpBox">
+        <div class="panelTitle">DCC-DOS HELP</div>
+        <div class="mono">
+          <div><b>F1</b> Help (toggle)</div>
+          <div><b>F3</b> Open selected item</div>
+          <div><b>F5</b> Refresh directory</div>
+          <div><b>F10</b> Exit session</div>
+          <br/>
+          <div><b>↑/↓</b> Move selection</div>
+          <div><b>Enter</b> Open</div>
+          <div><b>Backspace</b> Up one level</div>
+          <br/>
+          <div class="dim">NOTE: “LOCKED” files require a passphrase.</div>
+        </div>
+        <div class="helpFooter dim">Press F1 or Esc to close</div>
+      </div>
+    </div>
+
+    <main class="wrap">
+      <section class="left">
+        <div class="panelTitle" id="pathTitle">C:\DCC\doc\</div>
+        <div id="list" class="list"></div>
+
+        <div class="hint">
+          <div class="panelTitle">SYSTEM NOTE</div>
+          <div class="mono dim">
+            Some files require a passphrase.<br/>
+            Hint: it is present in plain text across the archive.
+          </div>
+        </div>
+      </section>
+
+      <section class="right">
+        <div class="panelTitle" id="viewerTitle">VIEWER</div>
+
+        <div id="locked" class="locked hidden">
+          <div class="big">FILE LOCKED</div>
+          <div class="mono dim">Enter passphrase:</div>
+          <input id="pw" class="pw" autocomplete="off" spellcheck="false" />
+          <button id="unlockBtn" class="btn">UNLOCK</button>
+          <div id="pwMsg" class="mono warn"></div>
+        </div>
+
+        <iframe id="pdf" class="pdf hidden" title="PDF Viewer"></iframe>
+
+        <div id="idle" class="idle">
+          <div class="big">DCC ARCHIVE TERMINAL</div>
+          <div class="mono dim">Select a file on the left to open.</div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="bar dim">
+      <div>
+        F1 HELP &nbsp; F3 OPEN &nbsp; F5 REFRESH &nbsp; F10 EXIT
+        &nbsp; | &nbsp;
+        <a href="mailto:amidophenolate@gmail.com" class="cmdlink">CONTACT YOUR SUPERIOR</a>
+      </div>
+      <div>SESSION: ANON</div>
+    </footer>
+	<div id="stabilizeModal" class="dcc-modal hidden">
+  <div class="dcc-modal-box">
+    <pre class="dcc-modal-text">
+DCC CONTAINMENT NOTICE
+
+Entropy levels have exceeded nominal operating bounds.
+A stabilization attempt may reduce localized effects.
+
+KNOWN SIDE EFFECTS:
+- File ordering may change
+- Directory references may become unreliable
+- Previous observations may be lost
+
+THIS ACTION DOES NOT GUARANTEE SAFETY.
+
+Type CONFIRM to initiate stabilization.
+    </pre>
+
+    <input id="stabilizeInput"
+           class="dcc-modal-input"
+           spellcheck="false"
+           autocomplete="off" />
+
+    <div class="dcc-modal-footer dim">
+      PRESS ENTER TO CONFIRM · ESC TO ABORT
+    </div>
+  </div>
+</div>
+
+	
+  </div>
+
+
+    <!-- ORDER MATTERS -->
+  <script src="app.js"></script>
+  <script defer src="entropy-engine.v7.js"></script>
+  <script defer src="assets/js/entropy-effects.js"></script>
+</body>
+</html>
+
